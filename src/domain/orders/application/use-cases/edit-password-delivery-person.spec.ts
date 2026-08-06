@@ -2,25 +2,25 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { FakeHasher } from 'test/cryptography/fake-hasher'
 import { makeDeliveryPerson } from 'test/factories/make-delivery-person'
 import { InMemoryDeliveryPersonsRepository } from 'test/repositories/in-memory-delivery-persons-repository'
-import { EditPasswordPasswordDeliveryPersonUseCase } from './edit-password-delivery-person'
+import { EditPasswordDeliveryPersonUseCase } from './edit-password-delivery-person'
 
 let inMemoryDeliveryPersonRepository: InMemoryDeliveryPersonsRepository
 let fakeHasher: FakeHasher
 
-let sut: EditPasswordPasswordDeliveryPersonUseCase
+let sut: EditPasswordDeliveryPersonUseCase
 
 describe('Edit Password Delivery Person', () => {
   beforeEach(() => {
     inMemoryDeliveryPersonRepository = new InMemoryDeliveryPersonsRepository()
     fakeHasher = new FakeHasher()
 
-    sut = new EditPasswordPasswordDeliveryPersonUseCase(
+    sut = new EditPasswordDeliveryPersonUseCase(
       inMemoryDeliveryPersonRepository,
       fakeHasher,
     )
   })
 
-  it('should be able to edit password a deivery person', async () => {
+  it('should be able to edit password a delivery person', async () => {
     const deliveryPerson = makeDeliveryPerson(
       {},
       new UniqueEntityID('deliveryPerson-1'),

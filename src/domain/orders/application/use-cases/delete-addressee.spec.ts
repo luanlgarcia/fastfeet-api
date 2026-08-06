@@ -7,14 +7,14 @@ let inMemoryAddresseeRepository: InMemoryAddresseesRepository
 
 let sut: DeleteAddresseeUseCase
 
-describe('Delete Delivery Person', () => {
+describe('Delete Addressee', () => {
   beforeEach(() => {
     inMemoryAddresseeRepository = new InMemoryAddresseesRepository()
 
     sut = new DeleteAddresseeUseCase(inMemoryAddresseeRepository)
   })
 
-  it('should be able to delete a deivery person', async () => {
+  it('should be able to delete a addressee', async () => {
     const addressee = makeAddressee({}, new UniqueEntityID('addressee-1'))
 
     await inMemoryAddresseeRepository.create(addressee)

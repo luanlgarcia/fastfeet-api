@@ -14,7 +14,7 @@ describe('Edit Delivery Person', () => {
     sut = new EditDeliveryPersonUseCase(inMemoryDeliveryPersonRepository)
   })
 
-  it('should be able to edit a deivery person', async () => {
+  it('should be able to edit a delivery person', async () => {
     const deliveryPerson = makeDeliveryPerson(
       {
         name: 'Jhon Doe',

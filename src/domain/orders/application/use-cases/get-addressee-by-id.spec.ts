@@ -7,14 +7,14 @@ let inMemoryAddresseesRepository: InMemoryAddresseesRepository
 
 let sut: GetAddresseeUseCase
 
-describe('Get Addresse By Id', () => {
+describe('Get Addressee By Id', () => {
   beforeEach(() => {
     inMemoryAddresseesRepository = new InMemoryAddresseesRepository()
 
     sut = new GetAddresseeUseCase(inMemoryAddresseesRepository)
   })
 
-  it('should be able to get a addresse by id', async () => {
+  it('should be able to get a addressee by id', async () => {
     const addressee = makeAddressee(
       {
         name: 'Jhon Doe',

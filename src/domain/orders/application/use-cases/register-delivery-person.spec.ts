@@ -1,6 +1,7 @@
 import { FakeHasher } from 'test/cryptography/fake-hasher'
 import { InMemoryDeliveryPersonsRepository } from 'test/repositories/in-memory-delivery-persons-repository'
 import { RegisterDeliveryPersonUseCase } from './register-delivery-person'
+import { DeliveryPersonAlreadyExistsError } from './errors/delivery-person-already-exists-error'
 
 let inMemoryDeliveryPersonRepository: InMemoryDeliveryPersonsRepository
 let fakeHasher: FakeHasher
@@ -18,7 +19,7 @@ describe('Register Delivery Person', () => {
     )
   })
 
-  it('should be able to register a new student', async () => {
+  it('should be able to register a new delivery person', async () => {
     const result = await sut.execute({
       name: 'Jhon Doe',
       cpf: '999.999.999-10',
@@ -30,8 +31,23 @@ describe('Register Delivery Person', () => {
       deliveryPerson: inMemoryDeliveryPersonRepository.items[0],
     })
   })
+  it('should not be able to register a new delivery person with the same CPF', async () => {
+    await sut.execute({
+      name: 'Jhon Doe',
+      cpf: '999.999.999-10',
+      password: '123456',
+    })
+    const result = await sut.execute({
+      name: 'Jhon Doe',
+      cpf: '999.999.999-10',
+      password: '123456',
+    })
 
-  it('should hash student password upon registration', async () => {
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(DeliveryPersonAlreadyExistsError)
+  })
+
+  it('should hash delivery person password upon registration', async () => {
     const result = await sut.execute({
       name: 'Jhon Doe',
       cpf: '999.999.999-10',

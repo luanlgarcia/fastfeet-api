@@ -18,7 +18,7 @@ type EditPasswordDeliveryPersonUseCaseResponse = Either<
 >
 
 @Injectable()
-export class EditPasswordPasswordDeliveryPersonUseCase {
+export class EditPasswordDeliveryPersonUseCase {
   constructor(
     private deliveryPersonsRepository: DeliveryPersonsRepository,
     private hashGenerator: HashGenerator,

@@ -14,7 +14,7 @@ describe('Delete Delivery Person', () => {
     sut = new DeleteDeliveryPersonUseCase(inMemoryDeliveryPersonRepository)
   })
 
-  it('should be able to delete a deivery person', async () => {
+  it('should be able to delete a delivery person', async () => {
     const deliveryPerson = makeDeliveryPerson(
       {},
       new UniqueEntityID('deliveryPerson-1'),
