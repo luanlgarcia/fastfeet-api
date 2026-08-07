@@ -1,15 +1,12 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
-import {
-  DeliveryPerson,
-  DeliveryPersonProps,
-} from '@/domain/orders/enterprise/entities/delivery-person'
+import { Admin, AdminProps } from '@/domain/orders/enterprise/entities/admin'
 import { fakerPT_BR as faker } from '@faker-js/faker'
 
-export function makeDeliveryPerson(
-  override: Partial<DeliveryPersonProps> = {},
+export function makeAdmin(
+  override: Partial<AdminProps> = {},
   id?: UniqueEntityID,
 ) {
-  const deliveryPerson = DeliveryPerson.create(
+  const admin = Admin.create(
     {
       name: faker.person.fullName(),
       cpf: faker.string.numeric(11),
@@ -19,5 +16,5 @@ export function makeDeliveryPerson(
     id,
   )
 
-  return deliveryPerson
+  return admin
 }
