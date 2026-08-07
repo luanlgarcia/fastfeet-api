@@ -6,7 +6,7 @@ import { InvalidOrderStatusError } from './errors/invalid-order-status-error'
 import { DeliveryPersonsRepository } from '../repositories/delivery-persons-repository'
 import { OrderNotFoundError } from './errors/order-not-found-error'
 import { DeliveryPersonNotFoundError } from './errors/delivery-person-not-found-error'
-import { NotAllowedError } from '../../../../core/errors/not-allowed-error'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
 
 interface DeliverOrderUseCaseRequest {
   orderId: string

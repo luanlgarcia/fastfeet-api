@@ -7,7 +7,7 @@ import { InvalidOrderStatusError } from './errors/invalid-order-status-error'
 import { OrderNotFoundError } from './errors/order-not-found-error'
 import { DeliverOrderUseCase } from './deliver-order'
 import { DeliveryPersonNotFoundError } from './errors/delivery-person-not-found-error'
-import { NotAllowedError } from '../../../../core/errors/not-allowed-error'
+import { NotAllowedError } from '@/core/errors/not-allowed-error'
 
 let inMemoryOrdersRepository: InMemoryOrdersRepository
 let inMemoryDeliveryPersonRepository: InMemoryDeliveryPersonsRepository
