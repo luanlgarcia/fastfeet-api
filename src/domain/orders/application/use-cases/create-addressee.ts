@@ -2,6 +2,7 @@ import { Either, right } from '@/core/either'
 import { Injectable } from '@nestjs/common'
 import { AddresseesRepository } from '../repositories/addressees-repository'
 import { Addressee } from '../../enterprise/entities/addressee'
+import { Coordinate } from '../../enterprise/entities/value-objects/coordinate'
 
 interface CreateAddresseeUseCaseRequest {
   name: string
@@ -10,6 +11,8 @@ interface CreateAddresseeUseCaseRequest {
   city: string
   state: string
   postalCode: string
+  latitude: number
+  longitude: number
 }
 
 type CreateAddresseeUseCaseResponse = Either<
@@ -30,6 +33,8 @@ export class CreateAddresseeUseCase {
     number,
     postalCode,
     state,
+    latitude,
+    longitude,
   }: CreateAddresseeUseCaseRequest): Promise<CreateAddresseeUseCaseResponse> {
     const addressee = await Addressee.create({
       name,
@@ -38,6 +43,7 @@ export class CreateAddresseeUseCase {
       number,
       postalCode,
       street,
+      coordinate: Coordinate.create({ latitude, longitude }),
     })
 
     await this.addresseesRepository.create(addressee)

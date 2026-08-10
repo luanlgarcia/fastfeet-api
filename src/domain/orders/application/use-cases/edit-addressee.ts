@@ -3,6 +3,7 @@ import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { Injectable } from '@nestjs/common'
 import { AddresseesRepository } from '../repositories/addressees-repository'
 import { Addressee } from '../../enterprise/entities/addressee'
+import { Coordinate } from '../../enterprise/entities/value-objects/coordinate'
 
 interface EditAddresseeUseCaseRequest {
   addresseeId: string
@@ -12,6 +13,8 @@ interface EditAddresseeUseCaseRequest {
   city: string
   state: string
   postalCode: string
+  latitude: number
+  longitude: number
 }
 
 type EditAddresseeUseCaseResponse = Either<
@@ -33,6 +36,8 @@ export class EditAddresseeUseCase {
     postalCode,
     state,
     street,
+    latitude,
+    longitude,
   }: EditAddresseeUseCaseRequest): Promise<EditAddresseeUseCaseResponse> {
     const addressee = await this.addresseesRepository.findById(addresseeId)
 
@@ -46,6 +51,7 @@ export class EditAddresseeUseCase {
     addressee.postalCode = postalCode
     addressee.state = state
     addressee.street = street
+    addressee.coordinate = Coordinate.create({ latitude, longitude })
 
     await this.addresseesRepository.save(addressee)
 

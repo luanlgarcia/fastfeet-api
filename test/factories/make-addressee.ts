@@ -3,6 +3,7 @@ import {
   Addressee,
   AddresseeProps,
 } from '@/domain/orders/enterprise/entities/addressee'
+import { Coordinate } from '@/domain/orders/enterprise/entities/value-objects/coordinate'
 import { fakerPT_BR as faker } from '@faker-js/faker'
 
 export function makeAddressee(
@@ -17,6 +18,10 @@ export function makeAddressee(
       state: faker.location.state({ abbreviated: true }),
       street: faker.location.street(),
       postalCode: faker.location.zipCode(),
+      coordinate: Coordinate.create({
+        latitude: faker.location.latitude(),
+        longitude: faker.location.longitude(),
+      }),
       ...override,
     },
     id,

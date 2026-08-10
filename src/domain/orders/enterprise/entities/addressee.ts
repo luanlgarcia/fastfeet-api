@@ -1,6 +1,7 @@
 import { Entity } from '@/core/entities/entity'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { Optional } from '@/core/types/optional'
+import { Coordinate } from './value-objects/coordinate'
 
 export interface AddresseeProps {
   name: string
@@ -11,6 +12,7 @@ export interface AddresseeProps {
   postalCode: string
   createdAt: Date
   updatedAt?: Date | null
+  coordinate: Coordinate
 }
 
 export class Addressee extends Entity<AddresseeProps> {
@@ -80,6 +82,16 @@ export class Addressee extends Entity<AddresseeProps> {
 
   get updatedAt() {
     return this.props.updatedAt
+  }
+
+  get coordinate() {
+    return this.props.coordinate
+  }
+
+  set coordinate(coordinate: Coordinate) {
+    this.props.coordinate = coordinate
+
+    this.touch()
   }
 
   private touch() {

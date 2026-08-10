@@ -26,6 +26,8 @@ describe('Edit Addressee', () => {
       postalCode: '99999-999',
       state: 'State Example',
       street: 'Street Example',
+      latitude: -19.472368048012747,
+      longitude: -42.54958052250055,
     })
 
     expect(inMemoryAddresseesRepository.items[0]).toMatchObject({
@@ -35,6 +37,10 @@ describe('Edit Addressee', () => {
       postalCode: '99999-999',
       state: 'State Example',
       street: 'Street Example',
+      coordinate: {
+        latitude: -19.472368048012747,
+        longitude: -42.54958052250055,
+      },
     })
   })
 })

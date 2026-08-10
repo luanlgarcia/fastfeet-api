@@ -19,6 +19,8 @@ describe('Create Addressee', () => {
       postalCode: '99999-999',
       state: 'State Example',
       street: 'Street Example',
+      latitude: -19.472368048012747,
+      longitude: -42.54958052250055,
     })
 
     expect(result.isRight()).toBe(true)
