@@ -2,27 +2,32 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { makeOrder } from 'test/factories/make-order'
 import { InMemoryOrdersRepository } from 'test/repositories/in-memory-orders-repository'
 import { DeleteOrderUseCase } from './delete-order'
+import { InMemoryAddresseesRepository } from 'test/repositories/in-memory-addressees-repository'
 
-let inMemoryOrderRepository: InMemoryOrdersRepository
+let inMemoryOrdersRepository: InMemoryOrdersRepository
+let inMemoryAddresseesRepository: InMemoryAddresseesRepository
 
 let sut: DeleteOrderUseCase
 
 describe('Delete Order', () => {
   beforeEach(() => {
-    inMemoryOrderRepository = new InMemoryOrdersRepository()
+    inMemoryAddresseesRepository = new InMemoryAddresseesRepository()
+    inMemoryOrdersRepository = new InMemoryOrdersRepository(
+      inMemoryAddresseesRepository,
+    )
 
-    sut = new DeleteOrderUseCase(inMemoryOrderRepository)
+    sut = new DeleteOrderUseCase(inMemoryOrdersRepository)
   })
 
   it('should be able to delete a order', async () => {
     const order = makeOrder({}, new UniqueEntityID('order-1'))
 
-    await inMemoryOrderRepository.create(order)
+    await inMemoryOrdersRepository.create(order)
 
     await sut.execute({
       orderId: 'order-1',
     })
 
-    expect(inMemoryOrderRepository.items).toHaveLength(0)
+    expect(inMemoryOrdersRepository.items).toHaveLength(0)
   })
 })

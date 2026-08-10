@@ -7,14 +7,19 @@ import { makeDeliveryPerson } from 'test/factories/make-delivery-person'
 import { InvalidOrderStatusError } from './errors/invalid-order-status-error'
 import { OrderNotFoundError } from './errors/order-not-found-error'
 import { DeliveryPersonNotFoundError } from './errors/delivery-person-not-found-error'
+import { InMemoryAddresseesRepository } from 'test/repositories/in-memory-addressees-repository'
 
 let inMemoryOrdersRepository: InMemoryOrdersRepository
 let inMemoryDeliveryPersonRepository: InMemoryDeliveryPersonsRepository
+let inMemoryAddresseesRepository: InMemoryAddresseesRepository
 let sut: PickUpOrderUseCase
 
 describe('Pick Up Order', () => {
   beforeEach(() => {
-    inMemoryOrdersRepository = new InMemoryOrdersRepository()
+    inMemoryAddresseesRepository = new InMemoryAddresseesRepository()
+    inMemoryOrdersRepository = new InMemoryOrdersRepository(
+      inMemoryAddresseesRepository,
+    )
     inMemoryDeliveryPersonRepository = new InMemoryDeliveryPersonsRepository()
 
     sut = new PickUpOrderUseCase(

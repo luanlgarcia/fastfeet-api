@@ -14,8 +14,10 @@ let sut: PostOrderUseCase
 
 describe('Post Order', () => {
   beforeEach(() => {
-    inMemoryOrdersRepository = new InMemoryOrdersRepository()
     inMemoryAddresseesRepository = new InMemoryAddresseesRepository()
+    inMemoryOrdersRepository = new InMemoryOrdersRepository(
+      inMemoryAddresseesRepository,
+    )
 
     sut = new PostOrderUseCase(
       inMemoryOrdersRepository,

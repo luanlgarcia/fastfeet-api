@@ -8,14 +8,20 @@ import { OrderNotFoundError } from './errors/order-not-found-error'
 import { DeliveryPersonNotFoundError } from './errors/delivery-person-not-found-error'
 import { ReturnOrderUseCase } from './return-order'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import { InMemoryAddresseesRepository } from 'test/repositories/in-memory-addressees-repository'
 
 let inMemoryOrdersRepository: InMemoryOrdersRepository
 let inMemoryDeliveryPersonRepository: InMemoryDeliveryPersonsRepository
+let inMemoryAddresseesRepository: InMemoryAddresseesRepository
 let sut: ReturnOrderUseCase
 
 describe('Return Order', () => {
   beforeEach(() => {
-    inMemoryOrdersRepository = new InMemoryOrdersRepository()
+    inMemoryAddresseesRepository = new InMemoryAddresseesRepository()
+    inMemoryOrdersRepository = new InMemoryOrdersRepository(
+      inMemoryAddresseesRepository,
+    )
+
     inMemoryDeliveryPersonRepository = new InMemoryDeliveryPersonsRepository()
 
     sut = new ReturnOrderUseCase(
