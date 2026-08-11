@@ -5,6 +5,7 @@ import {
 import { Order } from '@/domain/orders/enterprise/entities/order'
 import { Coordinate } from '@/domain/orders/enterprise/entities/value-objects/coordinate'
 import { AddresseesRepository } from '@/domain/orders/application/repositories/addressees-repository'
+import { PaginationParams } from '@/core/repositories/pagination-params'
 
 export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
@@ -21,7 +22,18 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return order
   }
 
-  async findManyNearby(params: { coordinate: Coordinate; page: number }) {
+  async findManyByDeliveryPersonId(
+    deliveryPersonId: string,
+    { page }: PaginationParams,
+  ) {
+    const orders = this.items
+      .filter((item) => item.deliveryPersonId?.toString() === deliveryPersonId)
+      .slice((page - 1) * 20, page * 20)
+
+    return orders
+  }
+
+  async findManyNearby(coordinate: Coordinate, { page }: PaginationParams) {
     const ordersWithDistance = await Promise.all(
       this.items
         .filter((item) => item.status === 'WAITING')
@@ -33,7 +45,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
           return {
             order,
             distance: addressee
-              ? addressee.coordinate.distanceTo(params.coordinate)
+              ? addressee.coordinate.distanceTo(coordinate)
               : Infinity,
           }
         }),
@@ -42,7 +54,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     return ordersWithDistance
       .filter((item) => item.distance <= MAX_DISTANCE_IN_KILOMETERS)
       .sort((a, b) => a.distance - b.distance)
-      .slice((params.page - 1) * 20, params.page * 20)
+      .slice((page - 1) * 20, page * 20)
       .map((item) => item.order)
   }
 
