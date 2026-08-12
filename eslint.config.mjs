@@ -24,6 +24,7 @@ export default tseslint.config(
     rules: {
       'no-useless-constructor': 'off',
       '@typescript-eslint/no-useless-constructor': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
       'no-new': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       'prettier/prettier': 'error',

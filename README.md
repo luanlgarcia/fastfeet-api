@@ -36,7 +36,7 @@ O projeto está sendo construído **de dentro para fora**: primeiro o domínio c
 - [x] Deve ser possível listar as encomendas com endereços de entrega próximos ao local do entregador
 - [x] Deve ser possível alterar a senha de um usuário
 - [x] Deve ser possível listar as entregas de um usuário
-- [ ] Deve ser possível notificar o destinatário a cada alteração no status da encomenda
+- [x] Deve ser possível notificar o destinatário a cada alteração no status da encomenda
 
 ### Regras de negócio
 

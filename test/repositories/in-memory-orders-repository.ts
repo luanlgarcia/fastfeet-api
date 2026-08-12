@@ -6,6 +6,7 @@ import { Order } from '@/domain/orders/enterprise/entities/order'
 import { Coordinate } from '@/domain/orders/enterprise/entities/value-objects/coordinate'
 import { AddresseesRepository } from '@/domain/orders/application/repositories/addressees-repository'
 import { PaginationParams } from '@/core/repositories/pagination-params'
+import { DomainEvents } from '@/core/events/domain-events'
 
 export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
@@ -62,9 +63,13 @@ export class InMemoryOrdersRepository implements OrdersRepository {
     const itemIndex = this.items.findIndex((item) => item.id === order.id)
 
     this.items[itemIndex] = order
+
+    DomainEvents.dispatchEventsForAggregate(order.id)
   }
   async create(order: Order) {
     this.items.push(order)
+
+    DomainEvents.dispatchEventsForAggregate(order.id)
   }
   async delete(order: Order) {
     const itemIndex = this.items.findIndex((item) => item.id === order.id)
