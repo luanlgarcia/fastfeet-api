@@ -14,7 +14,7 @@ export interface OrderProps {
   postedOn?: Date | null
   pickupDate?: Date | null
   deliveryDate?: Date | null
-  deliveredFileUrl?: string | null
+  deliveryPhotoId?: UniqueEntityID | null
   createdAt: Date
   updatedAt?: Date | null
 }
@@ -108,16 +108,16 @@ export class Order extends AggregateRoot<OrderProps> {
     this.touch()
   }
 
-  get deliveredFileUrl() {
-    return this.props.deliveredFileUrl
+  get deliveryPhotoId() {
+    return this.props.deliveryPhotoId
   }
 
-  set deliveredFileUrl(deliveredFileUrl: string | undefined | null) {
-    if (deliveredFileUrl === undefined || deliveredFileUrl === null) {
+  set deliveryPhotoId(deliveryPhotoId: UniqueEntityID | undefined | null) {
+    if (deliveryPhotoId === undefined || deliveryPhotoId === null) {
       return
     }
 
-    this.props.deliveredFileUrl = deliveredFileUrl
+    this.props.deliveryPhotoId = deliveryPhotoId
 
     this.touch()
   }

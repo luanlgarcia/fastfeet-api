@@ -7,17 +7,21 @@ import { DeliveryPersonsRepository } from '../repositories/delivery-persons-repo
 import { OrderNotFoundError } from './errors/order-not-found-error'
 import { DeliveryPersonNotFoundError } from './errors/delivery-person-not-found-error'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import { DeliveryPhotoNotFoundError } from './errors/delivery-photo-not-found-error'
+import { DeliveryPhotosRepository } from '../repositories/delivery-photos-repository'
 
 interface DeliverOrderUseCaseRequest {
   orderId: string
   deliveryPersonId: string
+  deliveryPhotoId: string
 }
 
 type DeliverOrderUseCaseResponse = Either<
   | OrderNotFoundError
   | InvalidOrderStatusError
   | DeliveryPersonNotFoundError
-  | NotAllowedError,
+  | NotAllowedError
+  | DeliveryPhotoNotFoundError,
   {
     order: Order
   }
@@ -28,11 +32,13 @@ export class DeliverOrderUseCase {
   constructor(
     private ordersRepository: OrdersRepository,
     private deliveryPersonRepository: DeliveryPersonsRepository,
+    private deliveryPhotosRepository: DeliveryPhotosRepository,
   ) {}
 
   async execute({
     orderId,
     deliveryPersonId,
+    deliveryPhotoId,
   }: DeliverOrderUseCaseRequest): Promise<DeliverOrderUseCaseResponse> {
     const order = await this.ordersRepository.findById(orderId)
 
@@ -55,8 +61,16 @@ export class DeliverOrderUseCase {
       return left(new DeliveryPersonNotFoundError(deliveryPersonId))
     }
 
+    const deliveryPhoto =
+      await this.deliveryPhotosRepository.findById(deliveryPhotoId)
+
+    if (!deliveryPhoto) {
+      return left(new DeliveryPhotoNotFoundError())
+    }
+
     order.status = 'DELIVERED'
     order.deliveryDate = new Date()
+    order.deliveryPhotoId = deliveryPhoto.id
 
     await this.ordersRepository.save(order)
 

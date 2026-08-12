@@ -9,9 +9,13 @@ import { DeliverOrderUseCase } from './deliver-order'
 import { DeliveryPersonNotFoundError } from './errors/delivery-person-not-found-error'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
 import { InMemoryAddresseesRepository } from 'test/repositories/in-memory-addressees-repository'
+import { InMemoryDeliveryPhotosRepository } from 'test/repositories/in-memory-delivery-photos-repository'
+import { makeDeliveryPhoto } from 'test/factories/make-delivery-photo'
+import { DeliveryPhotoNotFoundError } from './errors/delivery-photo-not-found-error'
 
 let inMemoryOrdersRepository: InMemoryOrdersRepository
 let inMemoryDeliveryPersonRepository: InMemoryDeliveryPersonsRepository
+let inMemoryDeliveryPhotosRepository: InMemoryDeliveryPhotosRepository
 let inMemoryAddresseesRepository: InMemoryAddresseesRepository
 
 let sut: DeliverOrderUseCase
@@ -19,6 +23,7 @@ let sut: DeliverOrderUseCase
 describe('Deliver Order', () => {
   beforeEach(() => {
     inMemoryAddresseesRepository = new InMemoryAddresseesRepository()
+    inMemoryDeliveryPhotosRepository = new InMemoryDeliveryPhotosRepository()
     inMemoryOrdersRepository = new InMemoryOrdersRepository(
       inMemoryAddresseesRepository,
     )
@@ -27,6 +32,7 @@ describe('Deliver Order', () => {
     sut = new DeliverOrderUseCase(
       inMemoryOrdersRepository,
       inMemoryDeliveryPersonRepository,
+      inMemoryDeliveryPhotosRepository,
     )
 
     inMemoryDeliveryPersonRepository.items.push(
@@ -42,18 +48,24 @@ describe('Deliver Order', () => {
         new UniqueEntityID('order-1'),
       ),
     )
+
+    inMemoryDeliveryPhotosRepository.items.push(
+      makeDeliveryPhoto({}, new UniqueEntityID('photo1')),
+    )
   })
 
   it('should be able to deliver an order', async () => {
     const result = await sut.execute({
       orderId: 'order-1',
       deliveryPersonId: 'deliveryPerson1',
+      deliveryPhotoId: 'photo1',
     })
 
     expect(result.isRight()).toBe(true)
     expect(inMemoryOrdersRepository.items[0]).toMatchObject({
       status: 'DELIVERED',
       deliveryDate: expect.any(Date),
+      deliveryPhotoId: new UniqueEntityID('photo1'),
     })
   })
 
@@ -61,6 +73,7 @@ describe('Deliver Order', () => {
     const result = await sut.execute({
       orderId: 'order-wrong',
       deliveryPersonId: 'deliveryPerson1',
+      deliveryPhotoId: 'photo1',
     })
 
     expect(result.isLeft()).toBe(true)
@@ -81,6 +94,7 @@ describe('Deliver Order', () => {
     const result = await sut.execute({
       orderId: 'order-2',
       deliveryPersonId: 'deleted-deliveryPerson',
+      deliveryPhotoId: 'photo1',
     })
 
     expect(result.isLeft()).toBe(true)
@@ -100,6 +114,7 @@ describe('Deliver Order', () => {
     const result = await sut.execute({
       orderId: 'order-2',
       deliveryPersonId: 'deliveryPerson1',
+      deliveryPhotoId: 'photo1',
     })
 
     expect(result.isLeft()).toBe(true)
@@ -110,9 +125,21 @@ describe('Deliver Order', () => {
     const result = await sut.execute({
       orderId: 'order-1',
       deliveryPersonId: 'deliveryPerson2',
+      deliveryPhotoId: 'photo1',
     })
 
     expect(result.isLeft()).toBe(true)
     expect(result.value).toBeInstanceOf(NotAllowedError)
+  })
+
+  it('should not be able to deliver an order with a non-existent photo', async () => {
+    const result = await sut.execute({
+      orderId: 'order-1',
+      deliveryPersonId: 'deliveryPerson1',
+      deliveryPhotoId: 'photo-wrong',
+    })
+
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toBeInstanceOf(DeliveryPhotoNotFoundError)
   })
 })

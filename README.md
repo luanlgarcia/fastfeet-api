@@ -17,8 +17,9 @@ O projeto está sendo construído **de dentro para fora**: primeiro o domínio c
 | Camada | Status |
 | --- | --- |
 | Domínio (entidades, value objects, casos de uso) | ✅ Concluído |
+| Notificações via Domain Events | ✅ Concluído |
 | Testes unitários | ✅ Concluído |
-| Notificações via Domain Events | 🚧 Em andamento |
+| Regras de negócio no domínio | 🚧 Em andamento |
 | Infraestrutura (Prisma, HTTP, JWT, upload) | ⬜ Não iniciado |
 | Testes E2E | ⬜ Não iniciado |
 
@@ -43,7 +44,7 @@ O projeto está sendo construído **de dentro para fora**: primeiro o domínio c
 - [ ] Somente usuário do tipo admin pode realizar operações de CRUD nas encomendas
 - [ ] Somente usuário do tipo admin pode realizar operações de CRUD dos entregadores
 - [ ] Somente usuário do tipo admin pode realizar operações de CRUD dos destinatários
-- [ ] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
+- [x] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto
 - [x] Somente o entregador que retirou a encomenda pode marcar ela como entregue
 - [ ] Somente o admin pode alterar a senha de um usuário
 - [ ] Não deve ser possível um entregador listar as encomendas de outro entregador
@@ -62,22 +63,34 @@ src/
 │   ├── repositories/              # PaginationParams
 │   └── types/
 │
-├── domain/orders/
-│   ├── enterprise/                # regras de negócio da empresa
-│   │   └── entities/              # Order, Addressee, DeliveryPerson, Admin
-│   │       └── value-objects/     # Coordinate
+├── domain/
+│   ├── orders/                    # contexto principal
+│   │   ├── enterprise/
+│   │   │   ├── entities/          # Order, Addressee, DeliveryPerson, Admin, DeliveryPhoto
+│   │   │   │   └── value-objects/ # Coordinate
+│   │   │   └── events/            # OrderStatusChangedEvent
+│   │   │
+│   │   └── application/
+│   │       ├── cryptography/      # contratos de hash e criptografia
+│   │       ├── storage/           # contrato de upload
+│   │       ├── repositories/      # contratos de persistência
+│   │       └── use-cases/         # casos de uso + erros específicos
 │   │
-│   └── application/               # regras de negócio da aplicação
-│       ├── cryptography/          # contratos de hash e criptografia
-│       ├── repositories/          # contratos de persistência
-│       └── use-cases/             # casos de uso + erros específicos
+│   └── notification/              # contexto de notificações
+│       ├── enterprise/entities/   # Notification
+│       └── application/
+│           ├── repositories/
+│           ├── subscribers/       # OnOrderStatusChanged
+│           └── use-cases/         # SendNotification, ReadNotification
 │
 └── infra/                         # (ainda não implementado)
 
 test/
 ├── factories/                     # fábricas de entidades para testes
 ├── repositories/                  # implementações in-memory
-└── cryptography/                  # dublês de hash e encrypter
+├── cryptography/                  # dublês de hash e encrypter
+├── storage/                       # dublê de uploader
+└── utils/                         # helpers (waitFor)
 ```
 
 O domínio não conhece NestJS, Prisma nem HTTP. Os casos de uso dependem apenas de contratos abstratos, o que permite testá-los com repositórios em memória.
@@ -97,7 +110,7 @@ PENDING ──▶ WAITING ──▶ PICKED_UP ──┬──▶ DELIVERED
 | `DELIVERED` | Entregue ao destinatário |
 | `RETURNED` | Devolvida |
 
-Cada transição é um caso de uso próprio, com validação do estado de origem.
+Cada transição é um caso de uso próprio, com validação do estado de origem. Qualquer mudança de status emite um `OrderStatusChangedEvent`, e o destinatário é notificado por um subscriber no contexto de notificações.
 
 ---
 
@@ -114,6 +127,10 @@ Alguns pontos do desafio admitem mais de uma leitura. As decisões tomadas e o r
 **Coordenadas geográficas são um value object.** Latitude e longitude nunca fazem sentido separadas, então formam um `Coordinate`, que também carrega o cálculo de distância como comportamento de domínio.
 
 **Proximidade considera um raio de 10 km**, definido em `MAX_DISTANCE_IN_KILOMETERS`, e as encomendas retornam ordenadas da mais próxima para a mais distante.
+
+**Um único evento de domínio para as mudanças de status.** O requisito fala em notificar "a cada alteração no status" — um conceito só, e hoje as quatro transições produzem a mesma reação. Em vez de quatro eventos específicos, existe um `OrderStatusChangedEvent` e um mapa de status para mensagem. Se alguma transição passar a exigir tratamento próprio, o evento específico é extraído nesse momento.
+
+**A foto de entrega é uma entidade, não uma URL na encomenda.** Ela tem tabela própria, e a encomenda guarda apenas `deliveryPhotoId`. Como a relação é 1:1, não existe tabela de junção nem lista observada — diferente de anexos de fórum, que são N por registro. O upload é um caso de uso separado que valida o tipo do arquivo (apenas JPEG e PNG) e devolve a foto criada; a entrega recebe o ID e faz o vínculo.
 
 ---
 
