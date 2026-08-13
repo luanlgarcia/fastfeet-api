@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/infra/database/prisma/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  DELIVERY_PERSON
+}
+
+enum OrderStatus {
+  PENDING
+  WAITING
+  PICKED_UP
+  DELIVERED
+  RETURNED
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  cpf       String    @unique
+  password  String
+  role      UserRole  @default(DELIVERY_PERSON)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  orders Order[]
+
+  @@map("users")
+}
+
+model Addressee {
+  id         String    @id @default(uuid())
+  name       String
+  street     String
+  number     String
+  city       String
+  state      String
+  postalCode String    @map("postal_code")
+  latitude   Float
+  longitude  Float
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+
+  orders        Order[]
+  notifications Notification[]
+
+  @@map("addressees")
+}
+
+model Order {
+  id               String      @id @default(uuid())
+  name             String
+  status           OrderStatus @default(PENDING)
+  addresseeId      String      @map("addressee_id")
+  deliveryPersonId String?     @map("delivery_person_id")
+  deliveryPhotoId  String?     @unique @map("delivery_photo_id")
+  postedOn         DateTime?   @map("posted_on")
+  pickupDate       DateTime?   @map("pickup_date")
+  deliveryDate     DateTime?   @map("delivery_date")
+  createdAt        DateTime    @default(now()) @map("created_at")
+  updatedAt        DateTime?   @updatedAt @map("updated_at")
+
+  addressee      Addressee      @relation(fields: [addresseeId], references: [id])
+  deliveryPerson User?          @relation(fields: [deliveryPersonId], references: [id])
+  deliveryPhoto  DeliveryPhoto? @relation(fields: [deliveryPhotoId], references: [id])
+
+  @@map("orders")
+}
+
+model DeliveryPhoto {
+  id    String @id @default(uuid())
+  title String
+  url   String
+
+  order Order?
+
+  @@map("delivery_photos")
+}
+
+model Notification {
+  id          String    @id @default(uuid())
+  recipientId String    @map("recipient_id")
+  title       String
+  content     String
+  readAt      DateTime? @map("read_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  recipient Addressee @relation(fields: [recipientId], references: [id])
+
+  @@map("notifications")
+}
