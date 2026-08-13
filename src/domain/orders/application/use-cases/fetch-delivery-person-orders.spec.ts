@@ -66,4 +66,23 @@ describe('Fetch Delivery Person Orders', () => {
 
     expect(result.value?.orders).toHaveLength(2)
   })
+
+  it('should not be able to fetch orders from another delivery person', async () => {
+    inMemoryOrdersRepository.items.push(
+      makeOrder(
+        { deliveryPersonId: new UniqueEntityID('deliveryPerson-2') },
+        new UniqueEntityID('order-3'),
+      ),
+    )
+
+    const result = await sut.execute({
+      deliveryPersonId: 'deliveryPerson-1',
+      page: 1,
+    })
+
+    expect(result.value?.orders).toHaveLength(1)
+    expect(result.value?.orders).toMatchObject([
+      { id: new UniqueEntityID('order-1') },
+    ])
+  })
 })
