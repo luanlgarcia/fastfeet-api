@@ -7,7 +7,7 @@ import { randomUUID } from 'node:crypto'
 import { PrismaPg } from '@prisma/adapter-pg'
 
 config({ path: '.env', override: true })
-config({ path: 'env.test', override: true })
+config({ path: '.env.test', override: true })
 
 const env = envSchema.parse(process.env)
 
@@ -27,11 +27,15 @@ const schemaId = randomUUID()
 const databaseURL = generateUniqueDatabaseURL(schemaId)
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: databaseURL }),
+  adapter: new PrismaPg(
+    { connectionString: databaseURL },
+    { schema: schemaId },
+  ),
 })
 
 beforeAll(async () => {
   process.env.DATABASE_URL = databaseURL
+  process.env.DATABASE_SCHEMA = schemaId
 
   DomainEvents.shouldRun = false
 
