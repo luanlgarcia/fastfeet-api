@@ -9,6 +9,8 @@ import { EditDeliveryPersonController } from './controllers/edit-delivery-person
 import { EditDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-delivery-person'
 import { DeleteDeliveryPersonController } from './controllers/delete-delivery-person.controller'
 import { DeleteDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/delete-delivery-person'
+import { GetDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/get-delivery-person-by-id'
+import { GetDeliveryPersonByIdController } from './controllers/get-delivery-person-by-id.controller'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -17,12 +19,14 @@ import { DeleteDeliveryPersonUseCase } from '@/domain/orders/application/use-cas
     AuthenticateCrontroller,
     EditDeliveryPersonController,
     DeleteDeliveryPersonController,
+    GetDeliveryPersonByIdController,
   ],
   providers: [
     RegisterDeliveryPersonUseCase,
     AuthenticateDeliveryPersonUseCase,
     EditDeliveryPersonUseCase,
     DeleteDeliveryPersonUseCase,
+    GetDeliveryPersonUseCase,
   ],
 })
 export class HttpModule {}
