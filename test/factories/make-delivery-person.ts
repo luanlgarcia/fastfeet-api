@@ -3,7 +3,10 @@ import {
   DeliveryPerson,
   DeliveryPersonProps,
 } from '@/domain/orders/enterprise/entities/delivery-person'
+import { PrismaDeliveryPersonMapper } from '@/infra/database/prisma/mappers/prisma-delivery-person-mapper'
+import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { fakerPT_BR as faker } from '@faker-js/faker'
+import { Injectable } from '@nestjs/common'
 
 export function makeDeliveryPerson(
   override: Partial<DeliveryPersonProps> = {},
@@ -20,4 +23,21 @@ export function makeDeliveryPerson(
   )
 
   return deliveryPerson
+}
+
+@Injectable()
+export class DeliveryPersonFactory {
+  constructor(private prisma: PrismaService) {}
+
+  async makePrismaDeliveryPerson(
+    data: Partial<DeliveryPersonProps> = {},
+  ): Promise<DeliveryPerson> {
+    const deliveryPerson = makeDeliveryPerson(data)
+
+    await this.prisma.user.create({
+      data: PrismaDeliveryPersonMapper.toPrisma(deliveryPerson),
+    })
+
+    return deliveryPerson
+  }
 }
