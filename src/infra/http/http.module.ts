@@ -5,10 +5,20 @@ import { RegisterDeliveryPersonUseCase } from '@/domain/orders/application/use-c
 import { CryptographyModule } from '../cryptography/cryptography.module'
 import { AuthenticateCrontroller } from './controllers/authenticate.controller'
 import { AuthenticateDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/authenticate-delivery-person'
+import { EditDeliveryPersonController } from './controllers/edit-delivery-person.controller'
+import { EditDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-delivery-person'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
-  controllers: [CreateAccountController, AuthenticateCrontroller],
-  providers: [RegisterDeliveryPersonUseCase, AuthenticateDeliveryPersonUseCase],
+  controllers: [
+    CreateAccountController,
+    AuthenticateCrontroller,
+    EditDeliveryPersonController,
+  ],
+  providers: [
+    RegisterDeliveryPersonUseCase,
+    AuthenticateDeliveryPersonUseCase,
+    EditDeliveryPersonUseCase,
+  ],
 })
 export class HttpModule {}
