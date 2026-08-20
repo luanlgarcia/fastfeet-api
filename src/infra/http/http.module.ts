@@ -27,6 +27,14 @@ import { EditOrderController } from './controllers/edit-order.controller'
 import { EditOrderUseCase } from '@/domain/orders/application/use-cases/edit-order'
 import { DeleteOrderController } from './controllers/delete-order.controller'
 import { DeleteOrderUseCase } from '@/domain/orders/application/use-cases/delete-order'
+import { PostOrderUseCase } from '@/domain/orders/application/use-cases/post-order'
+import { PostOrderController } from './controllers/post-order.controller'
+import { PickUpOrderController } from './controllers/pick-up-order.controller'
+import { PickUpOrderUseCase } from '@/domain/orders/application/use-cases/pick-up-order'
+import { DeliverOrderController } from './controllers/deliver-order.controller'
+import { DeliverOrderUseCase } from '@/domain/orders/application/use-cases/deliver-order'
+import { ReturnOrderController } from './controllers/return-order.controller'
+import { ReturnOrderUseCase } from '@/domain/orders/application/use-cases/return-order'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -44,6 +52,10 @@ import { DeleteOrderUseCase } from '@/domain/orders/application/use-cases/delete
     GetOrderByIdController,
     EditOrderController,
     DeleteOrderController,
+    PostOrderController,
+    PickUpOrderController,
+    DeliverOrderController,
+    ReturnOrderController,
   ],
   providers: [
     RegisterDeliveryPersonUseCase,
@@ -59,6 +71,10 @@ import { DeleteOrderUseCase } from '@/domain/orders/application/use-cases/delete
     GetOrderUseCase,
     EditOrderUseCase,
     DeleteOrderUseCase,
+    PostOrderUseCase,
+    PickUpOrderUseCase,
+    DeliverOrderUseCase,
+    ReturnOrderUseCase,
   ],
 })
 export class HttpModule {}
