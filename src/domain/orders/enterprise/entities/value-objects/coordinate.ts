@@ -1,20 +1,17 @@
-interface CoordinateProps {
+import { ValueObject } from '@/core/entities/value-object'
+
+export interface CoordinateProps {
   latitude: number
   longitude: number
 }
 
-export class Coordinate {
-  private props: CoordinateProps
-
+export class Coordinate extends ValueObject<CoordinateProps> {
   get latitude() {
     return this.props.latitude
   }
+
   get longitude() {
     return this.props.longitude
-  }
-
-  private constructor(props: CoordinateProps) {
-    this.props = props
   }
 
   static create(props: CoordinateProps) {
