@@ -19,6 +19,10 @@ import { EditAddresseeController } from './controllers/edit-addressee.controller
 import { EditAddresseeUseCase } from '@/domain/orders/application/use-cases/edit-addressee'
 import { DeleteAddresseeController } from './controllers/delete-addressee.controller'
 import { DeleteAddresseeUseCase } from '@/domain/orders/application/use-cases/delete-addressee'
+import { CreateOrderController } from './controllers/create-order.controller'
+import { CreateOrderUseCase } from '@/domain/orders/application/use-cases/create-order'
+import { GetOrderByIdController } from './controllers/get-order-by-id.controller'
+import { GetOrderUseCase } from '@/domain/orders/application/use-cases/get-order-by-id'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -32,6 +36,8 @@ import { DeleteAddresseeUseCase } from '@/domain/orders/application/use-cases/de
     GetAddresseeByIdController,
     EditAddresseeController,
     DeleteAddresseeController,
+    CreateOrderController,
+    GetOrderByIdController,
   ],
   providers: [
     RegisterDeliveryPersonUseCase,
@@ -43,6 +49,8 @@ import { DeleteAddresseeUseCase } from '@/domain/orders/application/use-cases/de
     GetAddresseeUseCase,
     EditAddresseeUseCase,
     DeleteAddresseeUseCase,
+    CreateOrderUseCase,
+    GetOrderUseCase,
   ],
 })
 export class HttpModule {}
