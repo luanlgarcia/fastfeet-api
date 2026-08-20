@@ -7,6 +7,7 @@ import { Coordinate } from '@/domain/orders/enterprise/entities/value-objects/co
 import { AddresseesRepository } from '@/domain/orders/application/repositories/addressees-repository'
 import { PaginationParams } from '@/core/repositories/pagination-params'
 import { DomainEvents } from '@/core/events/domain-events'
+import { OrderDetails } from '@/domain/orders/enterprise/entities/value-objects/order-details'
 
 export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
@@ -32,6 +33,47 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       .slice((page - 1) * 20, page * 20)
 
     return orders
+  }
+
+  async findDetailsById(id: string) {
+    const order = this.items.find((item) => item.id.toString() === id)
+
+    if (!order) {
+      return null
+    }
+
+    const addressee = await this.addresseesRepository.findById(
+      order.addresseeId.toString(),
+    )
+
+    if (!addressee) {
+      throw new Error(
+        `Addressee "${order.addresseeId.toString()}" does not exist.`,
+      )
+    }
+
+    return OrderDetails.create({
+      orderId: order.id,
+      name: order.name,
+      status: order.status,
+
+      addresseeId: addressee.id,
+      addressee: addressee.name,
+      street: addressee.street,
+      number: addressee.number,
+      city: addressee.city,
+      state: addressee.state,
+      postalCode: addressee.postalCode,
+
+      deliveryPersonId: order.deliveryPersonId,
+      deliveryPhotoId: order.deliveryPhotoId,
+
+      postedOn: order.postedOn,
+      pickupDate: order.pickupDate,
+      deliveryDate: order.deliveryDate,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    })
   }
 
   async findManyNearby(coordinate: Coordinate, { page }: PaginationParams) {

@@ -2,7 +2,7 @@ import { Either, left, right } from '@/core/either'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { Injectable } from '@nestjs/common'
 import { OrdersRepository } from '../repositories/orders-repository'
-import { Order } from '../../enterprise/entities/order'
+import { OrderDetails } from '../../enterprise/entities/value-objects/order-details'
 
 interface GetOrderUseCaseRequest {
   orderId: string
@@ -11,7 +11,7 @@ interface GetOrderUseCaseRequest {
 type GetOrderUseCaseResponse = Either<
   ResourceNotFoundError,
   {
-    order: Order
+    order: OrderDetails
   }
 >
 
@@ -22,7 +22,7 @@ export class GetOrderUseCase {
   async execute({
     orderId,
   }: GetOrderUseCaseRequest): Promise<GetOrderUseCaseResponse> {
-    const order = await this.ordersRepository.findById(orderId)
+    const order = await this.ordersRepository.findDetailsById(orderId)
 
     if (!order) {
       return left(new ResourceNotFoundError())

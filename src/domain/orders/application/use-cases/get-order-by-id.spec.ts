@@ -3,6 +3,7 @@ import { makeOrder } from 'test/factories/make-order'
 import { InMemoryOrdersRepository } from 'test/repositories/in-memory-orders-repository'
 import { GetOrderUseCase } from './get-order-by-id'
 import { InMemoryAddresseesRepository } from 'test/repositories/in-memory-addressees-repository'
+import { makeAddressee } from 'test/factories/make-addressee'
 
 let inMemoryOrdersRepository: InMemoryOrdersRepository
 let inMemoryAddresseesRepository: InMemoryAddresseesRepository
@@ -20,9 +21,14 @@ describe('Get Order By Id', () => {
   })
 
   it('should be able to get order by id', async () => {
+    const addressee = makeAddressee({}, new UniqueEntityID('addressee-1'))
+
+    await inMemoryAddresseesRepository.items.push(addressee)
+
     const order = makeOrder(
       {
         name: 'Order Example',
+        addresseeId: addressee.id,
       },
       new UniqueEntityID('order-1'),
     )
@@ -35,7 +41,9 @@ describe('Get Order By Id', () => {
 
     expect(result.value).toMatchObject({
       order: expect.objectContaining({
-        name: order.name,
+        name: 'Order Example',
+        addressee: addressee.name,
+        city: addressee.city,
       }),
     })
   })
