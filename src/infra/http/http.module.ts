@@ -39,12 +39,15 @@ import { FetchNearbyOrdersController } from './controllers/fetch-nearby-orders.c
 import { FetchNearbyOrdersUseCase } from '@/domain/orders/application/use-cases/fetch-nearby-orders'
 import { EditPasswordAccountController } from './controllers/edit-password-account.controller'
 import { EditPasswordDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-password-delivery-person'
+import { FetchDeliveryPersonOrdersController } from './controllers/fetch-delivery-person-orders.controller'
+import { FetchDeliveryPersonOrdersUseCase } from '@/domain/orders/application/use-cases/fetch-delivery-person-orders'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
   controllers: [
     CreateAccountController,
     FetchNearbyOrdersController,
+    FetchDeliveryPersonOrdersController,
     AuthenticateCrontroller,
     EditDeliveryPersonController,
     DeleteDeliveryPersonController,
@@ -66,6 +69,7 @@ import { EditPasswordDeliveryPersonUseCase } from '@/domain/orders/application/u
   providers: [
     RegisterDeliveryPersonUseCase,
     FetchNearbyOrdersUseCase,
+    FetchDeliveryPersonOrdersUseCase,
     AuthenticateDeliveryPersonUseCase,
     EditDeliveryPersonUseCase,
     DeleteDeliveryPersonUseCase,

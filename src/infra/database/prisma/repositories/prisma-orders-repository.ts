@@ -28,11 +28,12 @@ export class PrismaOrdersRepository implements OrdersRepository {
   async findManyByDeliveryPersonId(
     deliveryPersonId: string,
     { page }: PaginationParams,
-  ): Promise<Order[]> {
+  ): Promise<OrderDetails[]> {
     const orders = await this.prisma.order.findMany({
       where: {
         deliveryPersonId,
       },
+      include: { addressee: true },
       orderBy: {
         createdAt: 'desc',
       },
@@ -40,7 +41,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
       skip: (page - 1) * 20,
     })
 
-    return orders.map(PrismaOrderMapper.toDomain)
+    return orders.map(PrismaOrderDetailsMapper.toDomain)
   }
 
   async findDetailsById(id: string) {
