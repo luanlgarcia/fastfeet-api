@@ -10,6 +10,7 @@ import { Coordinate } from '@/domain/orders/enterprise/entities/value-objects/co
 import { PrismaOrderMapper } from '../mappers/prisma-order-mapper'
 import { PrismaOrderDetailsMapper } from '../mappers/prisma-order-details-mapper'
 import { OrderDetails } from '@/domain/orders/enterprise/entities/value-objects/order-details'
+import { DomainEvents } from '@/core/events/domain-events'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
@@ -104,6 +105,8 @@ export class PrismaOrdersRepository implements OrdersRepository {
       where: { id: order.id.toString() },
       data: PrismaOrderMapper.toPrisma(order),
     })
+
+    DomainEvents.dispatchEventsForAggregate(order.id)
   }
 
   async create(order: Order): Promise<void> {
