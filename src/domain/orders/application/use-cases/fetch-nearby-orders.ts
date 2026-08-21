@@ -1,8 +1,8 @@
 import { Either, right } from '@/core/either'
 import { OrdersRepository } from '../repositories/orders-repository'
-import { Order } from '../../enterprise/entities/order'
 import { Coordinate } from '../../enterprise/entities/value-objects/coordinate'
 import { Injectable } from '@nestjs/common'
+import { OrderDetails } from '../../enterprise/entities/value-objects/order-details'
 
 interface FetchNearbyOrdersUseCaseRequest {
   latitude: number
@@ -13,7 +13,7 @@ interface FetchNearbyOrdersUseCaseRequest {
 type FetchNearbyOrdersUseCaseResponse = Either<
   null,
   {
-    orders: Order[]
+    orders: OrderDetails[]
   }
 >
 

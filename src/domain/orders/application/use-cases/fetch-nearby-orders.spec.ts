@@ -73,7 +73,7 @@ describe('Fetch Nearby Orders', () => {
 
     expect(result.value?.orders).toHaveLength(1)
     expect(result.value?.orders).toMatchObject([
-      { id: new UniqueEntityID('order-1') },
+      { orderId: new UniqueEntityID('order-1') },
     ])
   })
   it('should not return orders that are not waiting for pickup', async () => {
@@ -104,8 +104,8 @@ describe('Fetch Nearby Orders', () => {
 
     expect(result.value?.orders).toHaveLength(2)
     expect(result.value?.orders).toMatchObject([
-      { id: new UniqueEntityID('order-1') },
-      { id: new UniqueEntityID('order-4') },
+      { orderId: new UniqueEntityID('order-1') },
+      { orderId: new UniqueEntityID('order-4') },
     ])
   })
   it('should return orders sorted by distance', async () => {
@@ -154,9 +154,9 @@ describe('Fetch Nearby Orders', () => {
     })
 
     expect(result.value?.orders).toMatchObject([
-      { id: new UniqueEntityID('order-closest') }, // ~1,2 km
-      { id: new UniqueEntityID('order-1') }, // ~2,7 km
-      { id: new UniqueEntityID('order-farther') }, // ~4,8 km
+      { orderId: new UniqueEntityID('order-closest') }, // ~1,2 km
+      { orderId: new UniqueEntityID('order-1') }, // ~2,7 km
+      { orderId: new UniqueEntityID('order-farther') }, // ~4,8 km
     ])
   })
   it('should be able to fetch paginated nearby orders', async () => {

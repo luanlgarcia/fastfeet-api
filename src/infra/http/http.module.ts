@@ -35,11 +35,14 @@ import { DeliverOrderController } from './controllers/deliver-order.controller'
 import { DeliverOrderUseCase } from '@/domain/orders/application/use-cases/deliver-order'
 import { ReturnOrderController } from './controllers/return-order.controller'
 import { ReturnOrderUseCase } from '@/domain/orders/application/use-cases/return-order'
+import { FetchNearbyOrdersController } from './controllers/fetch-nearby-orders.controller'
+import { FetchNearbyOrdersUseCase } from '@/domain/orders/application/use-cases/fetch-nearby-orders'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
   controllers: [
     CreateAccountController,
+    FetchNearbyOrdersController,
     AuthenticateCrontroller,
     EditDeliveryPersonController,
     DeleteDeliveryPersonController,
@@ -59,6 +62,7 @@ import { ReturnOrderUseCase } from '@/domain/orders/application/use-cases/return
   ],
   providers: [
     RegisterDeliveryPersonUseCase,
+    FetchNearbyOrdersUseCase,
     AuthenticateDeliveryPersonUseCase,
     EditDeliveryPersonUseCase,
     DeleteDeliveryPersonUseCase,

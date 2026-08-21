@@ -15,7 +15,7 @@ export abstract class OrdersRepository {
   abstract findManyNearby(
     coordinate: Coordinate,
     params: PaginationParams,
-  ): Promise<Order[]>
+  ): Promise<OrderDetails[]>
   abstract save(order: Order): Promise<void>
   abstract create(order: Order): Promise<void>
   abstract delete(order: Order): Promise<void>

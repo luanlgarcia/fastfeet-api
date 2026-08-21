@@ -10,7 +10,12 @@ export class PrismaService
   constructor() {
     super({
       adapter: new PrismaPg(
-        { connectionString: process.env.DATABASE_URL },
+        {
+          connectionString: process.env.DATABASE_URL,
+          options: process.env.DATABASE_SCHEMA
+            ? `-c search_path="${process.env.DATABASE_SCHEMA}"`
+            : undefined,
+        },
         { schema: process.env.DATABASE_SCHEMA },
       ),
       log: ['warn', 'error'],

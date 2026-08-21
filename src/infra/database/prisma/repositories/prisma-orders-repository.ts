@@ -9,6 +9,7 @@ import { Order } from '@/domain/orders/enterprise/entities/order'
 import { Coordinate } from '@/domain/orders/enterprise/entities/value-objects/coordinate'
 import { PrismaOrderMapper } from '../mappers/prisma-order-mapper'
 import { PrismaOrderDetailsMapper } from '../mappers/prisma-order-details-mapper'
+import { OrderDetails } from '@/domain/orders/enterprise/entities/value-objects/order-details'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
@@ -58,7 +59,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
   async findManyNearby(
     coordinate: Coordinate,
     { page }: PaginationParams,
-  ): Promise<Order[]> {
+  ): Promise<OrderDetails[]> {
     const { latitude, longitude } = coordinate
 
     const nearby = await this.prisma.$queryRaw<{ id: string }[]>`
@@ -86,6 +87,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
 
     const orders = await this.prisma.order.findMany({
       where: { id: { in: ids } },
+      include: { addressee: true },
     })
 
     const ordersById = new Map(orders.map((order) => [order.id, order]))
@@ -93,7 +95,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     return ids
       .map((id) => ordersById.get(id))
       .filter((order) => order !== undefined)
-      .map(PrismaOrderMapper.toDomain)
+      .map(PrismaOrderDetailsMapper.toDomain)
   }
 
   async save(order: Order): Promise<void> {

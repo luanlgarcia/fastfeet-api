@@ -77,28 +77,55 @@ export class InMemoryOrdersRepository implements OrdersRepository {
   }
 
   async findManyNearby(coordinate: Coordinate, { page }: PaginationParams) {
-    const ordersWithDistance = await Promise.all(
-      this.items
-        .filter((item) => item.status === 'WAITING')
-        .map(async (order) => {
-          const addressee = await this.addresseesRepository.findById(
-            order.addresseeId.toString(),
-          )
+    const nearby: { details: OrderDetails; distance: number }[] = []
 
-          return {
-            order,
-            distance: addressee
-              ? addressee.coordinate.distanceTo(coordinate)
-              : Infinity,
-          }
+    for (const order of this.items) {
+      if (order.status !== 'WAITING') {
+        continue
+      }
+
+      const addressee = await this.addresseesRepository.findById(
+        order.addresseeId.toString(),
+      )
+
+      if (!addressee) {
+        continue
+      }
+
+      const distance = addressee.coordinate.distanceTo(coordinate)
+
+      if (distance > MAX_DISTANCE_IN_KILOMETERS) {
+        continue
+      }
+
+      nearby.push({
+        distance,
+        details: OrderDetails.create({
+          orderId: order.id,
+          name: order.name,
+          status: order.status,
+          addresseeId: addressee.id,
+          addressee: addressee.name,
+          street: addressee.street,
+          number: addressee.number,
+          city: addressee.city,
+          state: addressee.state,
+          postalCode: addressee.postalCode,
+          deliveryPersonId: order.deliveryPersonId,
+          deliveryPhotoId: order.deliveryPhotoId,
+          postedOn: order.postedOn,
+          pickupDate: order.pickupDate,
+          deliveryDate: order.deliveryDate,
+          createdAt: order.createdAt,
+          updatedAt: order.updatedAt,
         }),
-    )
+      })
+    }
 
-    return ordersWithDistance
-      .filter((item) => item.distance <= MAX_DISTANCE_IN_KILOMETERS)
+    return nearby
       .sort((a, b) => a.distance - b.distance)
       .slice((page - 1) * 20, page * 20)
-      .map((item) => item.order)
+      .map((item) => item.details)
   }
 
   async save(order: Order) {
