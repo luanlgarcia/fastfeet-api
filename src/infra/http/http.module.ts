@@ -37,6 +37,8 @@ import { ReturnOrderController } from './controllers/return-order.controller'
 import { ReturnOrderUseCase } from '@/domain/orders/application/use-cases/return-order'
 import { FetchNearbyOrdersController } from './controllers/fetch-nearby-orders.controller'
 import { FetchNearbyOrdersUseCase } from '@/domain/orders/application/use-cases/fetch-nearby-orders'
+import { EditPasswordAccountController } from './controllers/edit-password-account.controller'
+import { EditPasswordDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-password-delivery-person'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -59,6 +61,7 @@ import { FetchNearbyOrdersUseCase } from '@/domain/orders/application/use-cases/
     PickUpOrderController,
     DeliverOrderController,
     ReturnOrderController,
+    EditPasswordAccountController,
   ],
   providers: [
     RegisterDeliveryPersonUseCase,
@@ -79,6 +82,7 @@ import { FetchNearbyOrdersUseCase } from '@/domain/orders/application/use-cases/
     PickUpOrderUseCase,
     DeliverOrderUseCase,
     ReturnOrderUseCase,
+    EditPasswordDeliveryPersonUseCase,
   ],
 })
 export class HttpModule {}
