@@ -5,6 +5,7 @@ import { InMemoryDeliveryPersonsRepository } from 'test/repositories/in-memory-d
 import { makeDeliveryPerson } from 'test/factories/make-delivery-person'
 import { UniqueEntityID } from '@/core/entities/unique-entity-id'
 import { makeOrder } from 'test/factories/make-order'
+import { makeAddressee } from 'test/factories/make-addressee'
 
 let inMemoryOrdersRepository: InMemoryOrdersRepository
 let inMemoryAddresseesRepository: InMemoryAddresseesRepository
@@ -25,16 +26,26 @@ describe('Fetch Delivery Person Orders', () => {
       makeDeliveryPerson({}, new UniqueEntityID('deliveryPerson-1')),
     )
 
+    inMemoryAddresseesRepository.items.push(
+      makeAddressee({}, new UniqueEntityID('addressee-1')),
+    )
+
     inMemoryOrdersRepository.items.push(
       makeOrder(
         {
           deliveryPersonId: new UniqueEntityID('deliveryPerson-1'),
+          addresseeId: new UniqueEntityID('addressee-1'),
         },
         new UniqueEntityID('order-1'),
       ),
     )
     inMemoryOrdersRepository.items.push(
-      makeOrder({}, new UniqueEntityID('order-2')),
+      makeOrder(
+        {
+          addresseeId: new UniqueEntityID('addressee-1'),
+        },
+        new UniqueEntityID('order-2'),
+      ),
     )
   })
 
@@ -47,7 +58,7 @@ describe('Fetch Delivery Person Orders', () => {
     expect(result.value?.orders).toHaveLength(1)
     expect(result.value?.orders).toMatchObject([
       {
-        id: new UniqueEntityID('order-1'),
+        orderId: new UniqueEntityID('order-1'),
       },
     ])
   })
@@ -55,7 +66,10 @@ describe('Fetch Delivery Person Orders', () => {
   it('should be able to fetch paginated delivery person orders', async () => {
     for (let i = 1; i <= 21; i++) {
       inMemoryOrdersRepository.items.push(
-        makeOrder({ deliveryPersonId: new UniqueEntityID('deliveryPerson-1') }),
+        makeOrder({
+          deliveryPersonId: new UniqueEntityID('deliveryPerson-1'),
+          addresseeId: new UniqueEntityID('addressee-1'),
+        }),
       )
     }
 
@@ -70,7 +84,10 @@ describe('Fetch Delivery Person Orders', () => {
   it('should not be able to fetch orders from another delivery person', async () => {
     inMemoryOrdersRepository.items.push(
       makeOrder(
-        { deliveryPersonId: new UniqueEntityID('deliveryPerson-2') },
+        {
+          deliveryPersonId: new UniqueEntityID('deliveryPerson-2'),
+          addresseeId: new UniqueEntityID('addressee-1'),
+        },
         new UniqueEntityID('order-3'),
       ),
     )
@@ -82,7 +99,7 @@ describe('Fetch Delivery Person Orders', () => {
 
     expect(result.value?.orders).toHaveLength(1)
     expect(result.value?.orders).toMatchObject([
-      { id: new UniqueEntityID('order-1') },
+      { orderId: new UniqueEntityID('order-1') },
     ])
   })
 })

@@ -8,11 +8,34 @@ import { AddresseesRepository } from '@/domain/orders/application/repositories/a
 import { PaginationParams } from '@/core/repositories/pagination-params'
 import { DomainEvents } from '@/core/events/domain-events'
 import { OrderDetails } from '@/domain/orders/enterprise/entities/value-objects/order-details'
+import { Addressee } from '@/domain/orders/enterprise/entities/addressee'
 
 export class InMemoryOrdersRepository implements OrdersRepository {
   public items: Order[] = []
 
   constructor(private addresseesRepository: AddresseesRepository) {}
+
+  private toDetails(order: Order, addressee: Addressee): OrderDetails {
+    return OrderDetails.create({
+      orderId: order.id,
+      name: order.name,
+      status: order.status,
+      addresseeId: addressee.id,
+      addressee: addressee.name,
+      street: addressee.street,
+      number: addressee.number,
+      city: addressee.city,
+      state: addressee.state,
+      postalCode: addressee.postalCode,
+      deliveryPersonId: order.deliveryPersonId,
+      deliveryPhotoId: order.deliveryPhotoId,
+      postedOn: order.postedOn,
+      pickupDate: order.pickupDate,
+      deliveryDate: order.deliveryDate,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
+    })
+  }
 
   async findById(id: string) {
     const order = this.items.find((item) => item.id.toString() === id)
@@ -32,7 +55,23 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       .filter((item) => item.deliveryPersonId?.toString() === deliveryPersonId)
       .slice((page - 1) * 20, page * 20)
 
-    return orders
+    const details: OrderDetails[] = []
+
+    for (const order of orders) {
+      const addressee = await this.addresseesRepository.findById(
+        order.addresseeId.toString(),
+      )
+
+      if (!addressee) {
+        throw new Error(
+          `Addressee "${order.addresseeId.toString()}" does not exist.`,
+        )
+      }
+
+      details.push(this.toDetails(order, addressee))
+    }
+
+    return details
   }
 
   async findDetailsById(id: string) {
@@ -52,28 +91,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
       )
     }
 
-    return OrderDetails.create({
-      orderId: order.id,
-      name: order.name,
-      status: order.status,
-
-      addresseeId: addressee.id,
-      addressee: addressee.name,
-      street: addressee.street,
-      number: addressee.number,
-      city: addressee.city,
-      state: addressee.state,
-      postalCode: addressee.postalCode,
-
-      deliveryPersonId: order.deliveryPersonId,
-      deliveryPhotoId: order.deliveryPhotoId,
-
-      postedOn: order.postedOn,
-      pickupDate: order.pickupDate,
-      deliveryDate: order.deliveryDate,
-      createdAt: order.createdAt,
-      updatedAt: order.updatedAt,
-    })
+    return this.toDetails(order, addressee)
   }
 
   async findManyNearby(coordinate: Coordinate, { page }: PaginationParams) {
@@ -100,25 +118,7 @@ export class InMemoryOrdersRepository implements OrdersRepository {
 
       nearby.push({
         distance,
-        details: OrderDetails.create({
-          orderId: order.id,
-          name: order.name,
-          status: order.status,
-          addresseeId: addressee.id,
-          addressee: addressee.name,
-          street: addressee.street,
-          number: addressee.number,
-          city: addressee.city,
-          state: addressee.state,
-          postalCode: addressee.postalCode,
-          deliveryPersonId: order.deliveryPersonId,
-          deliveryPhotoId: order.deliveryPhotoId,
-          postedOn: order.postedOn,
-          pickupDate: order.pickupDate,
-          deliveryDate: order.deliveryDate,
-          createdAt: order.createdAt,
-          updatedAt: order.updatedAt,
-        }),
+        details: this.toDetails(order, addressee),
       })
     }
 
