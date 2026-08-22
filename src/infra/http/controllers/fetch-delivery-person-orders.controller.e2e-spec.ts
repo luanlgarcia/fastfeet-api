@@ -31,7 +31,7 @@ describe('Fetch Delivery Person Orders (E2e)', () => {
     await app.init()
   })
 
-  test('[GET] /delivery-persons/:id/orders', async () => {
+  test('[GET] /delivery-persons/orders', async () => {
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()
     const acessToken = await jwt.sign({
@@ -62,10 +62,8 @@ describe('Fetch Delivery Person Orders (E2e)', () => {
       status: 'PICKED_UP',
     })
 
-    const deliveryPersonId = deliveryPerson.id.toString()
-
     const response = await request(app.getHttpServer())
-      .get(`/delivery-persons/${deliveryPersonId}/orders`)
+      .get('/delivery-persons/orders')
       .set('Authorization', `Bearer ${acessToken}`)
       .send()
 
