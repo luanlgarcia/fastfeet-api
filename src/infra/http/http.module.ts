@@ -41,7 +41,7 @@ import { EditPasswordAccountController } from './controllers/edit-password-accou
 import { EditPasswordDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-password-delivery-person'
 import { FetchDeliveryPersonOrdersController } from './controllers/fetch-delivery-person-orders.controller'
 import { FetchDeliveryPersonOrdersUseCase } from '@/domain/orders/application/use-cases/fetch-delivery-person-orders'
-import { StorageModule } from '../storage/store.module'
+import { StorageModule } from '../storage/storage.module'
 import { UploadDeliveryPhotoController } from './controllers/upload-delivery-photo.controller'
 import { UploadDeliveryPhotoUseCase } from '@/domain/orders/application/use-cases/upload-delivery-photo'
 

@@ -7,6 +7,7 @@ import {
   MaxFileSizeValidator,
   ParseFilePipe,
   Post,
+  UnsupportedMediaTypeException,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common'
@@ -44,7 +45,7 @@ export class UploadDeliveryPhotoController {
 
       switch (error.constructor) {
         case InvalidPhotoTypeError:
-          throw new BadRequestException(error.message)
+          throw new UnsupportedMediaTypeException(error.message)
         default:
           throw new BadRequestException(error.message)
       }
