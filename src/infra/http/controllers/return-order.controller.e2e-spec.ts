@@ -57,9 +57,7 @@ describe('Return Order (E2E)', () => {
     const response = await request(app.getHttpServer())
       .patch(`/orders/${orderId}/return`)
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({
-        deliveryPersonId: deliveryPerson.id.toString(),
-      })
+      .send()
 
     expect(response.statusCode).toBe(204)
 

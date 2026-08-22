@@ -1,8 +1,5 @@
-import { z } from 'zod'
-import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
 import {
   BadRequestException,
-  Body,
   ConflictException,
   Controller,
   ForbiddenException,
@@ -16,14 +13,8 @@ import { InvalidOrderStatusError } from '@/domain/orders/application/use-cases/e
 import { DeliveryPersonNotFoundError } from '@/domain/orders/application/use-cases/errors/delivery-person-not-found-error'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
 import { ReturnOrderUseCase } from '@/domain/orders/application/use-cases/return-order'
-
-const returnOrderBodySchema = z.object({
-  deliveryPersonId: z.uuid(),
-})
-
-const bodyValidationPipe = new ZodValidationPipe(returnOrderBodySchema)
-
-type ReturnOrderBodySchema = z.infer<typeof returnOrderBodySchema>
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import type { UserPayload } from '@/infra/auth/jwt.strategy'
 
 @Controller('/orders')
 export class ReturnOrderController {
@@ -31,15 +22,10 @@ export class ReturnOrderController {
 
   @Patch(':id/return')
   @HttpCode(204)
-  async handle(
-    @Body(bodyValidationPipe) body: ReturnOrderBodySchema,
-    @Param('id') orderId: string,
-  ) {
-    const { deliveryPersonId } = body
-
+  async handle(@Param('id') orderId: string, @CurrentUser() user: UserPayload) {
     const result = await this.returnOrder.execute({
       orderId,
-      deliveryPersonId,
+      deliveryPersonId: user.sub,
     })
 
     if (result.isLeft()) {

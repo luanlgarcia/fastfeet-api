@@ -17,9 +17,10 @@ import { DeliveryPersonNotFoundError } from '@/domain/orders/application/use-cas
 import { DeliverOrderUseCase } from '@/domain/orders/application/use-cases/deliver-order'
 import { DeliveryPhotoNotFoundError } from '@/domain/orders/application/use-cases/errors/delivery-photo-not-found-error'
 import { NotAllowedError } from '@/core/errors/not-allowed-error'
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import type { UserPayload } from '@/infra/auth/jwt.strategy'
 
 const deliverOrderBodySchema = z.object({
-  deliveryPersonId: z.uuid(),
   deliveryPhotoId: z.uuid(),
 })
 
@@ -36,12 +37,13 @@ export class DeliverOrderController {
   async handle(
     @Body(bodyValidationPipe) body: DeliverOrderBodySchema,
     @Param('id') orderId: string,
+    @CurrentUser() user: UserPayload,
   ) {
-    const { deliveryPersonId, deliveryPhotoId } = body
+    const { deliveryPhotoId } = body
 
     const result = await this.deliverOrder.execute({
       orderId,
-      deliveryPersonId,
+      deliveryPersonId: user.sub,
       deliveryPhotoId,
     })
 

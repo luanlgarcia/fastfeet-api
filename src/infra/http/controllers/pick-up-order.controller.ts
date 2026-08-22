@@ -1,8 +1,5 @@
-import { z } from 'zod'
-import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
 import {
   BadRequestException,
-  Body,
   ConflictException,
   Controller,
   HttpCode,
@@ -14,14 +11,8 @@ import { OrderNotFoundError } from '@/domain/orders/application/use-cases/errors
 import { InvalidOrderStatusError } from '@/domain/orders/application/use-cases/errors/invalid-order-status-error'
 import { PickUpOrderUseCase } from '@/domain/orders/application/use-cases/pick-up-order'
 import { DeliveryPersonNotFoundError } from '@/domain/orders/application/use-cases/errors/delivery-person-not-found-error'
-
-const pickUpOrderBodySchema = z.object({
-  deliveryPersonId: z.uuid(),
-})
-
-const bodyValidationPipe = new ZodValidationPipe(pickUpOrderBodySchema)
-
-type PickUpOrderBodySchema = z.infer<typeof pickUpOrderBodySchema>
+import { CurrentUser } from '@/infra/auth/current-user-decorator'
+import type { UserPayload } from '@/infra/auth/jwt.strategy'
 
 @Controller('/orders')
 export class PickUpOrderController {
@@ -29,15 +20,10 @@ export class PickUpOrderController {
 
   @Patch(':id/pick-up')
   @HttpCode(204)
-  async handle(
-    @Body(bodyValidationPipe) body: PickUpOrderBodySchema,
-    @Param('id') orderId: string,
-  ) {
-    const { deliveryPersonId } = body
-
+  async handle(@Param('id') orderId: string, @CurrentUser() user: UserPayload) {
     const result = await this.pickUpOrder.execute({
       orderId,
-      deliveryPersonId,
+      deliveryPersonId: user.sub,
     })
 
     if (result.isLeft()) {

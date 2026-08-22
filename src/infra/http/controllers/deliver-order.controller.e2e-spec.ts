@@ -69,7 +69,6 @@ describe('Deliver Order (E2E)', () => {
       .patch(`/orders/${orderId}/deliver`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        deliveryPersonId: deliveryPerson.id.toString(),
         deliveryPhotoId: deliveryPhoto.id.toString(),
       })
 

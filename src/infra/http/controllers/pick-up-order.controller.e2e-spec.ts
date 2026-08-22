@@ -8,13 +8,11 @@ import { AddresseeFactory } from 'test/factories/make-addressee'
 import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import { OrderFactory } from 'test/factories/make-order'
 import request from 'supertest'
-import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Pick Up Order (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let deliveryPersonFactory: DeliveryPersonFactory
-  let adminFactory: AdminFactory
   let addresseeFactory: AddresseeFactory
   let orderFactory: OrderFactory
   let jwt: JwtService
@@ -22,12 +20,7 @@ describe('Pick Up Order (E2E)', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [
-        DeliveryPersonFactory,
-        AddresseeFactory,
-        OrderFactory,
-        AdminFactory,
-      ],
+      providers: [DeliveryPersonFactory, AddresseeFactory, OrderFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
@@ -36,7 +29,6 @@ describe('Pick Up Order (E2E)', () => {
 
     jwt = moduleRef.get(JwtService)
 
-    adminFactory = moduleRef.get(AdminFactory)
     deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
     addresseeFactory = moduleRef.get(AddresseeFactory)
     orderFactory = moduleRef.get(OrderFactory)
@@ -45,11 +37,12 @@ describe('Pick Up Order (E2E)', () => {
   })
 
   test('[PATCH] /orders/:id/pick-up', async () => {
-    const user = await adminFactory.makePrismaAdmin()
-    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
-
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const accessToken = jwt.sign({
+      sub: deliveryPerson.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
 
     const addressee = await addresseeFactory.makeAddressee()
 
@@ -63,9 +56,7 @@ describe('Pick Up Order (E2E)', () => {
     const response = await request(app.getHttpServer())
       .patch(`/orders/${orderId}/pick-up`)
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({
-        deliveryPersonId: deliveryPerson.id.toString(),
-      })
+      .send()
 
     expect(response.statusCode).toBe(204)
 
