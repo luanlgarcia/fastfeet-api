@@ -44,6 +44,7 @@ import { FetchDeliveryPersonOrdersUseCase } from '@/domain/orders/application/us
 import { StorageModule } from '../storage/storage.module'
 import { UploadDeliveryPhotoController } from './controllers/upload-delivery-photo.controller'
 import { UploadDeliveryPhotoUseCase } from '@/domain/orders/application/use-cases/upload-delivery-photo'
+import { AuthenticateAdminUseCase } from '@/domain/orders/application/use-cases/authenticate-admin'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule, StorageModule],
@@ -74,6 +75,7 @@ import { UploadDeliveryPhotoUseCase } from '@/domain/orders/application/use-case
     RegisterDeliveryPersonUseCase,
     FetchNearbyOrdersUseCase,
     FetchDeliveryPersonOrdersUseCase,
+    AuthenticateAdminUseCase,
     AuthenticateDeliveryPersonUseCase,
     EditDeliveryPersonUseCase,
     DeleteDeliveryPersonUseCase,

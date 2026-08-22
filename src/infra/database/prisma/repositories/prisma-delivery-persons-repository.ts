@@ -9,9 +9,10 @@ export class PrismaDeliveryPersonsRepository implements DeliveryPersonsRepositor
   constructor(private prisma: PrismaService) {}
 
   async findByCpf(cpf: string): Promise<DeliveryPerson | null> {
-    const deliveryPerson = await this.prisma.user.findUnique({
+    const deliveryPerson = await this.prisma.user.findFirst({
       where: {
         cpf,
+        role: 'DELIVERY_PERSON',
       },
     })
 
@@ -23,9 +24,10 @@ export class PrismaDeliveryPersonsRepository implements DeliveryPersonsRepositor
   }
 
   async findById(id: string): Promise<DeliveryPerson | null> {
-    const deliveryPerson = await this.prisma.user.findUnique({
+    const deliveryPerson = await this.prisma.user.findFirst({
       where: {
         id,
+        role: 'DELIVERY_PERSON',
       },
     })
 

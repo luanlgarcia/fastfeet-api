@@ -116,14 +116,12 @@ describe('On order status changed (E2E)', () => {
   })
 
   it('should send a notification when an order is delivered', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = await jwt.sign({
-      sub: user.id.toString(),
-      role: 'DELIVERY_PERSON',
-    })
-
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const accessToken = await jwt.sign({
+      sub: deliveryPerson.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
 
     const addressee = await addresseeFactory.makeAddressee()
 
@@ -141,7 +139,6 @@ describe('On order status changed (E2E)', () => {
       .patch(`/orders/${orderId}/deliver`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
-        deliveryPersonId: deliveryPerson.id.toString(),
         deliveryPhotoId: deliveryPhoto.id.toString(),
       })
 
@@ -157,14 +154,12 @@ describe('On order status changed (E2E)', () => {
   })
 
   it('should send a notification when an order is returned', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = await jwt.sign({
-      sub: user.id.toString(),
-      role: 'DELIVERY_PERSON',
-    })
-
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const accessToken = await jwt.sign({
+      sub: deliveryPerson.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
 
     const addressee = await addresseeFactory.makeAddressee()
 
@@ -179,9 +174,7 @@ describe('On order status changed (E2E)', () => {
     await request(app.getHttpServer())
       .patch(`/orders/${orderId}/return`)
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({
-        deliveryPersonId: deliveryPerson.id.toString(),
-      })
+      .send()
 
     await waitFor(async () => {
       const notificationOnDatabase = await prisma.notification.findFirst({
