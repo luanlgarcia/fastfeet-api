@@ -29,7 +29,7 @@ type AuthenticateBodySchema = z.infer<typeof authenticateBodySchema>
 
 @Controller('/sessions')
 @Public()
-export class AuthenticateCrontroller {
+export class AuthenticateController {
   constructor(
     private authenticateDeliveryPersonUseCase: AuthenticateDeliveryPersonUseCase,
     private authenticateAdminUseCase: AuthenticateAdminUseCase,

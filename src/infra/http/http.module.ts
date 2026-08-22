@@ -3,7 +3,7 @@ import { CreateAccountController } from './controllers/create-account.controller
 import { DatabaseModule } from '../database/database.module'
 import { RegisterDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/register-delivery-person'
 import { CryptographyModule } from '../cryptography/cryptography.module'
-import { AuthenticateCrontroller } from './controllers/authenticate.controller'
+import { AuthenticateController } from './controllers/authenticate.controller'
 import { AuthenticateDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/authenticate-delivery-person'
 import { EditDeliveryPersonController } from './controllers/edit-delivery-person.controller'
 import { EditDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-delivery-person'
@@ -52,7 +52,7 @@ import { AuthenticateAdminUseCase } from '@/domain/orders/application/use-cases/
     CreateAccountController,
     FetchNearbyOrdersController,
     FetchDeliveryPersonOrdersController,
-    AuthenticateCrontroller,
+    AuthenticateController,
     EditDeliveryPersonController,
     DeleteDeliveryPersonController,
     GetDeliveryPersonByIdController,

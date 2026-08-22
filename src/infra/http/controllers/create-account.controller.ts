@@ -19,13 +19,13 @@ const cpfSchema = z
     message: 'CPF must have exactly 11 digits',
   })
 
-const creaeAccountBodySchema = z.object({
+const createAccountBodySchema = z.object({
   cpf: cpfSchema,
   name: z.string().min(1),
   password: z.string().min(6),
 })
 
-type CreateAccountBodySchema = z.infer<typeof creaeAccountBodySchema>
+type CreateAccountBodySchema = z.infer<typeof createAccountBodySchema>
 
 @Controller('/accounts')
 @Roles('ADMIN')
@@ -35,7 +35,7 @@ export class CreateAccountController {
   ) {}
 
   @Post()
-  @UsePipes(new ZodValidationPipe(creaeAccountBodySchema))
+  @UsePipes(new ZodValidationPipe(createAccountBodySchema))
   async handle(@Body() body: CreateAccountBodySchema) {
     const { cpf, name, password } = body
 
