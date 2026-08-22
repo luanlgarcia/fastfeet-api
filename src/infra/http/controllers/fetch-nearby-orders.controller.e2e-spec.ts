@@ -35,7 +35,10 @@ describe('Fetch nearby orders (E2E)', () => {
   test('[GET] /orders/nearby', async () => {
     const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
 
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const accessToken = await jwt.sign({
+      sub: user.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
 
     // Av. Paulista — ~2,7 km da Sé
     const nearbyAddressee = await addresseeFactory.makeAddressee({

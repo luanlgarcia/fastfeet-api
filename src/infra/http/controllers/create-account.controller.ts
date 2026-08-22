@@ -10,6 +10,7 @@ import {
 import { z } from 'zod'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
 import { DeliveryPersonAlreadyExistsError } from '@/domain/orders/application/use-cases/errors/delivery-person-already-exists-error'
+import { Roles } from '@/infra/auth/roles'
 
 const cpfSchema = z
   .string()
@@ -27,6 +28,7 @@ const creaeAccountBodySchema = z.object({
 type CreateAccountBodySchema = z.infer<typeof creaeAccountBodySchema>
 
 @Controller('/accounts')
+@Roles('ADMIN')
 export class CreateAccountController {
   constructor(
     private registerDeliveryPersonUseCase: RegisterDeliveryPersonUseCase,

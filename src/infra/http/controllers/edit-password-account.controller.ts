@@ -11,6 +11,7 @@ import { z } from 'zod'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
 import { EditPasswordDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-password-delivery-person'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
+import { Roles } from '@/infra/auth/roles'
 
 const editPasswordAccountBodySchema = z.object({
   password: z.string().min(6),
@@ -23,6 +24,7 @@ type EditPasswordAccountBodySchema = z.infer<
 >
 
 @Controller('/accounts')
+@Roles('ADMIN')
 export class EditPasswordAccountController {
   constructor(
     private editPasswordDeliveryPerson: EditPasswordDeliveryPersonUseCase,

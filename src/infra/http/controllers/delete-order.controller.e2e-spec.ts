@@ -5,14 +5,14 @@ import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import { AddresseeFactory } from 'test/factories/make-addressee'
-import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import { OrderFactory } from 'test/factories/make-order'
 import request from 'supertest'
+import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Delete order (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
-  let deliveryPersonFactory: DeliveryPersonFactory
+  let adminFactory: AdminFactory
   let addresseeFactory: AddresseeFactory
   let orderFactory: OrderFactory
   let jwt: JwtService
@@ -20,13 +20,13 @@ describe('Delete order (E2E)', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory, AddresseeFactory, OrderFactory],
+      providers: [AdminFactory, AddresseeFactory, OrderFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
     prisma = moduleRef.get(PrismaService)
-    deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
+    adminFactory = moduleRef.get(AdminFactory)
     addresseeFactory = moduleRef.get(AddresseeFactory)
     orderFactory = moduleRef.get(OrderFactory)
     jwt = moduleRef.get(JwtService)
@@ -35,9 +35,9 @@ describe('Delete order (E2E)', () => {
   })
 
   test('[DELETE] /orders/:id', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const user = await adminFactory.makePrismaAdmin()
 
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
     const addresse = await addresseeFactory.makeAddressee()
 
@@ -51,12 +51,12 @@ describe('Delete order (E2E)', () => {
 
     expect(response.statusCode).toBe(204)
 
-    const addresseOnDatabase = await prisma.user.findUnique({
+    const orderOnDatabase = await prisma.order.findUnique({
       where: {
         id: orderId,
       },
     })
 
-    expect(addresseOnDatabase).toBeNull()
+    expect(orderOnDatabase).toBeNull()
   })
 })

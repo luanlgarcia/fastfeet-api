@@ -1,5 +1,6 @@
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { DeleteOrderUseCase } from '@/domain/orders/application/use-cases/delete-order'
+import { Roles } from '@/infra/auth/roles'
 import {
   BadRequestException,
   Controller,
@@ -10,6 +11,7 @@ import {
 } from '@nestjs/common'
 
 @Controller('/orders/')
+@Roles('ADMIN')
 export class DeleteOrderController {
   constructor(private deleteOrder: DeleteOrderUseCase) {}
 

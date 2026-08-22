@@ -6,25 +6,25 @@ import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import request from 'supertest'
 import { AddresseeFactory } from 'test/factories/make-addressee'
-import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
+import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Delete Addressee (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
-  let deliveryPersonFactory: DeliveryPersonFactory
+  let adminFactory: AdminFactory
   let addresseeFactory: AddresseeFactory
   let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory, AddresseeFactory],
+      providers: [AdminFactory, AddresseeFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
     prisma = moduleRef.get(PrismaService)
-    deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
+    adminFactory = moduleRef.get(AdminFactory)
     addresseeFactory = moduleRef.get(AddresseeFactory)
     jwt = moduleRef.get(JwtService)
 
@@ -32,9 +32,9 @@ describe('Delete Addressee (E2E)', () => {
   })
 
   test('[DELETE] /addressees/:id', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const user = await adminFactory.makePrismaAdmin()
 
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
     const addresse = await addresseeFactory.makeAddressee()
 

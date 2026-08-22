@@ -4,13 +4,13 @@ import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import { AddresseeFactory } from 'test/factories/make-addressee'
-import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import { OrderFactory } from 'test/factories/make-order'
 import request from 'supertest'
+import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Get order by id (E2E)', () => {
   let app: INestApplication
-  let deliveryPersonFactory: DeliveryPersonFactory
+  let adminFactory: AdminFactory
   let addresseeFactory: AddresseeFactory
   let orderFactory: OrderFactory
   let jwt: JwtService
@@ -18,12 +18,12 @@ describe('Get order by id (E2E)', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory, AddresseeFactory, OrderFactory],
+      providers: [AdminFactory, AddresseeFactory, OrderFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
-    deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
+    adminFactory = moduleRef.get(AdminFactory)
     addresseeFactory = moduleRef.get(AddresseeFactory)
     orderFactory = moduleRef.get(OrderFactory)
     jwt = moduleRef.get(JwtService)
@@ -32,9 +32,9 @@ describe('Get order by id (E2E)', () => {
   })
 
   test('[GET] /orders/:id', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const user = await adminFactory.makePrismaAdmin()
 
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
     const addressee = await addresseeFactory.makeAddressee({
       name: 'Jhon Doe',

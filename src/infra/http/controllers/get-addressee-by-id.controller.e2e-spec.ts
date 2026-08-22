@@ -3,25 +3,25 @@ import { DatabaseModule } from '@/infra/database/database.module'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import request from 'supertest'
 import { AddresseeFactory } from 'test/factories/make-addressee'
+import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Get addressee by id (E2E)', () => {
   let app: INestApplication
-  let deliveryPersonFactory: DeliveryPersonFactory
   let addresseeFactory: AddresseeFactory
+  let adminFactory: AdminFactory
   let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory, AddresseeFactory],
+      providers: [AddresseeFactory, AdminFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
-    deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
+    adminFactory = moduleRef.get(AdminFactory)
     addresseeFactory = moduleRef.get(AddresseeFactory)
     jwt = moduleRef.get(JwtService)
 
@@ -29,9 +29,9 @@ describe('Get addressee by id (E2E)', () => {
   })
 
   test('[GET] /addressees/:id', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const user = await adminFactory.makePrismaAdmin()
 
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
     const addressee = await addresseeFactory.makeAddressee({
       name: 'Jhon Doe',

@@ -1,5 +1,6 @@
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 import { DeleteAddresseeUseCase } from '@/domain/orders/application/use-cases/delete-addressee'
+import { Roles } from '@/infra/auth/roles'
 import {
   BadRequestException,
   Controller,
@@ -10,6 +11,7 @@ import {
 } from '@nestjs/common'
 
 @Controller('/addressees/')
+@Roles('ADMIN')
 export class DeleteAddresseeController {
   constructor(private deleteAddressee: DeleteAddresseeUseCase) {}
 

@@ -4,21 +4,21 @@ import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import request from 'supertest'
 import { AddresseeFactory } from 'test/factories/make-addressee'
+import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Edit Addressee (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
-  let deliveryPersonFactory: DeliveryPersonFactory
+  let adminFactory: AdminFactory
   let addresseeFactory: AddresseeFactory
   let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory, AddresseeFactory],
+      providers: [AdminFactory, AddresseeFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
@@ -27,15 +27,15 @@ describe('Edit Addressee (E2E)', () => {
 
     jwt = moduleRef.get(JwtService)
 
-    deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
+    adminFactory = moduleRef.get(AdminFactory)
     addresseeFactory = moduleRef.get(AddresseeFactory)
 
     await app.init()
   })
 
   test('[PUT] /addressees/:id', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const user = await adminFactory.makePrismaAdmin()
+    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
     const addressee = await addresseeFactory.makeAddressee()
 

@@ -7,17 +7,19 @@ import { Test } from '@nestjs/testing'
 import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import request from 'supertest'
 import { compare } from 'bcryptjs'
+import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Edit Account Password (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let jwt: JwtService
   let deliveryPersonFactory: DeliveryPersonFactory
+  let adminFactory: AdminFactory
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory],
+      providers: [DeliveryPersonFactory, AdminFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
@@ -25,13 +27,14 @@ describe('Edit Account Password (E2E)', () => {
     prisma = moduleRef.get(PrismaService)
     jwt = moduleRef.get(JwtService)
     deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
+    adminFactory = moduleRef.get(AdminFactory)
 
     await app.init()
   })
 
   test('[PATCH] /accounts/:id/reset-password', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const user = await adminFactory.makePrismaAdmin()
+    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()

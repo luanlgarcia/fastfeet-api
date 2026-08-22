@@ -4,35 +4,34 @@ import { PrismaService } from '@/infra/database/prisma/prisma.service'
 import { INestApplication } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
-import { AddresseeFactory } from 'test/factories/make-addressee'
-import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import request from 'supertest'
+import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Create addressee (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
-  let deliveryPersonFactory: DeliveryPersonFactory
+  let adminFactory: AdminFactory
   let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory, AddresseeFactory],
+      providers: [AdminFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
     prisma = moduleRef.get(PrismaService)
-    deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
+    adminFactory = moduleRef.get(AdminFactory)
     jwt = moduleRef.get(JwtService)
 
     await app.init()
   })
 
   test('[POST] /addressees', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const user = await adminFactory.makePrismaAdmin()
 
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
     const response = await request(app.getHttpServer())
       .post('/addressees')

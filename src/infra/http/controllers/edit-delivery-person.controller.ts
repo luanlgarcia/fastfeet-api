@@ -9,6 +9,7 @@ import {
   Put,
 } from '@nestjs/common'
 import { EditDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-delivery-person'
+import { Roles } from '@/infra/auth/roles'
 
 const editDeliveryPersonBodySchema = z.object({
   name: z.string(),
@@ -19,6 +20,7 @@ const bodyValidationPipe = new ZodValidationPipe(editDeliveryPersonBodySchema)
 type EditDeliveryPersonBodySchema = z.infer<typeof editDeliveryPersonBodySchema>
 
 @Controller('/delivery-persons')
+@Roles('ADMIN')
 export class EditDeliveryPersonController {
   constructor(private editDeliveryPerson: EditDeliveryPersonUseCase) {}
 

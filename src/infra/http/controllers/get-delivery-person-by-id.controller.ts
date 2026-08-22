@@ -8,8 +8,10 @@ import {
   Param,
 } from '@nestjs/common'
 import { DeliveryPersonPresenter } from '../presenters/delivery-person-presenter'
+import { Roles } from '@/infra/auth/roles'
 
 @Controller('/delivery-persons')
+@Roles('ADMIN')
 export class GetDeliveryPersonByIdController {
   constructor(private getDeliveryPersonById: GetDeliveryPersonUseCase) {}
 

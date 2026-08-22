@@ -32,10 +32,14 @@ describe('Fetch Delivery Person Orders (E2e)', () => {
   })
 
   test('[GET] /delivery-persons/:id/orders', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const acessToken = await jwt.sign({ sub: user.id.toString() })
-
     const deliveryPerson =
+      await deliveryPersonFactory.makePrismaDeliveryPerson()
+    const acessToken = await jwt.sign({
+      sub: deliveryPerson.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
+
+    const deliveryPerson2 =
       await deliveryPersonFactory.makePrismaDeliveryPerson()
 
     const addressee = await addresseeFactory.makeAddressee()
@@ -54,7 +58,7 @@ describe('Fetch Delivery Person Orders (E2e)', () => {
 
     await orderFactory.makeOrder({
       addresseeId: addressee.id,
-      deliveryPersonId: user.id,
+      deliveryPersonId: deliveryPerson2.id,
       status: 'PICKED_UP',
     })
 

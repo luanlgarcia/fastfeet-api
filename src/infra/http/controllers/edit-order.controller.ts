@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { EditOrderUseCase } from '@/domain/orders/application/use-cases/edit-order'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
+import { Roles } from '@/infra/auth/roles'
 
 const editOrderBodySchema = z.object({
   name: z.string().min(1),
@@ -22,6 +23,7 @@ const bodyValidationPipe = new ZodValidationPipe(editOrderBodySchema)
 type EditOrderBodySchema = z.infer<typeof editOrderBodySchema>
 
 @Controller('/orders/')
+@Roles('ADMIN')
 export class EditOrderController {
   constructor(private editOrder: EditOrderUseCase) {}
 

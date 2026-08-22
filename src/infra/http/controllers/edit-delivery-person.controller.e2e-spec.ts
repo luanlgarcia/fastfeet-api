@@ -6,17 +6,19 @@ import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import request from 'supertest'
+import { AdminFactory } from 'test/factories/make-admin'
 
 describe('Edit Delivery Person (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
+  let adminFactory: AdminFactory
   let deliveryPersonFactory: DeliveryPersonFactory
   let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory],
+      providers: [DeliveryPersonFactory, AdminFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
@@ -25,16 +27,20 @@ describe('Edit Delivery Person (E2E)', () => {
 
     jwt = moduleRef.get(JwtService)
 
+    adminFactory = moduleRef.get(AdminFactory)
     deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
 
     await app.init()
   })
 
   test('[PUT] /delivery-persons/:id', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = jwt.sign({ sub: user.id.toString() })
+    const user = await adminFactory.makePrismaAdmin()
+    const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
-    const deliverypersonId = user.id.toString()
+    const deliveryPerson =
+      await deliveryPersonFactory.makePrismaDeliveryPerson()
+
+    const deliverypersonId = deliveryPerson.id.toString()
 
     const response = await request(app.getHttpServer())
       .put(`/delivery-persons/${deliverypersonId}`)

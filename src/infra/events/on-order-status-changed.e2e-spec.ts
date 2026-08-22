@@ -49,7 +49,10 @@ describe('On order status changed (E2E)', () => {
 
   it('should send a notification when an order is posted', async () => {
     const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = await jwt.sign({ sub: user.id.toString() })
+    const accessToken = await jwt.sign({
+      sub: user.id.toString(),
+      role: 'ADMIN',
+    })
 
     const addressee = await addresseeFactory.makeAddressee()
 
@@ -77,7 +80,10 @@ describe('On order status changed (E2E)', () => {
 
   it('should send a notification when an order is picked up', async () => {
     const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = await jwt.sign({ sub: user.id.toString() })
+    const accessToken = await jwt.sign({
+      sub: user.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
 
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()
@@ -111,7 +117,10 @@ describe('On order status changed (E2E)', () => {
 
   it('should send a notification when an order is delivered', async () => {
     const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = await jwt.sign({ sub: user.id.toString() })
+    const accessToken = await jwt.sign({
+      sub: user.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
 
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()
@@ -149,7 +158,10 @@ describe('On order status changed (E2E)', () => {
 
   it('should send a notification when an order is returned', async () => {
     const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = await jwt.sign({ sub: user.id.toString() })
+    const accessToken = await jwt.sign({
+      sub: user.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
 
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()

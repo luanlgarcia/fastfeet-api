@@ -10,10 +10,16 @@ import { DeliveryPhotosRepository } from '@/domain/orders/application/repositori
 import { PrismaDeliveryPhotosRepository } from './prisma/repositories/prisma-delivery-photo-repository'
 import { NotificationsRepository } from '@/domain/notification/application/repositories/notifications-repository'
 import { PrismaNotificationsRepository } from './prisma/repositories/prisma-notification-repository'
+import { AdminsRepository } from '@/domain/orders/application/repositories/admins-repository'
+import { PrismaAdminsRepository } from './prisma/repositories/prisma-admins-repository'
 
 @Module({
   providers: [
     PrismaService,
+    {
+      provide: AdminsRepository,
+      useClass: PrismaAdminsRepository,
+    },
     {
       provide: DeliveryPersonsRepository,
       useClass: PrismaDeliveryPersonsRepository,
@@ -37,6 +43,7 @@ import { PrismaNotificationsRepository } from './prisma/repositories/prisma-noti
   ],
   exports: [
     PrismaService,
+    AdminsRepository,
     DeliveryPersonsRepository,
     AddresseesRepository,
     OrdersRepository,

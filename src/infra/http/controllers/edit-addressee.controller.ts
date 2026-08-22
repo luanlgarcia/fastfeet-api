@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { EditAddresseeUseCase } from '@/domain/orders/application/use-cases/edit-addressee'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
+import { Roles } from '@/infra/auth/roles'
 
 const postalCodeSchema = z
   .string()
@@ -35,6 +36,7 @@ const bodyValidationPipe = new ZodValidationPipe(editAddresseeBodySchema)
 type EditAddresseeBodySchema = z.infer<typeof editAddresseeBodySchema>
 
 @Controller('/addressees/')
+@Roles('ADMIN')
 export class EditAddresseeController {
   constructor(private editAddressee: EditAddresseeUseCase) {}
 

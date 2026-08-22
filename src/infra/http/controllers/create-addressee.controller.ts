@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { ZodValidationPipe } from '../pipes/zod-validation-pipe'
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
 import { CreateAddresseeUseCase } from '@/domain/orders/application/use-cases/create-addressee'
+import { Roles } from '@/infra/auth/roles'
 
 const postalCodeSchema = z
   .string()
@@ -26,6 +27,7 @@ const bodyValidationPipe = new ZodValidationPipe(createAddresseeBodySchema)
 type CreateAddresseeBodySchema = z.infer<typeof createAddresseeBodySchema>
 
 @Controller('/addressees')
+@Roles('ADMIN')
 export class CreateAddresseeController {
   constructor(private createAddressee: CreateAddresseeUseCase) {}
 

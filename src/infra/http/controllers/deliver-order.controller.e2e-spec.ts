@@ -45,11 +45,13 @@ describe('Deliver Order (E2E)', () => {
   })
 
   test('[PATCH] /orders/:id/deliver', async () => {
-    const user = await deliveryPersonFactory.makePrismaDeliveryPerson()
-    const accessToken = jwt.sign({ sub: user.id.toString() })
-
     const deliveryPerson =
       await deliveryPersonFactory.makePrismaDeliveryPerson()
+
+    const accessToken = jwt.sign({
+      sub: deliveryPerson.id.toString(),
+      role: 'DELIVERY_PERSON',
+    })
 
     const addressee = await addresseeFactory.makeAddressee()
 

@@ -10,8 +10,10 @@ import {
 import { PostOrderUseCase } from '@/domain/orders/application/use-cases/post-order'
 import { OrderNotFoundError } from '@/domain/orders/application/use-cases/errors/order-not-found-error'
 import { InvalidOrderStatusError } from '@/domain/orders/application/use-cases/errors/invalid-order-status-error'
+import { Roles } from '@/infra/auth/roles'
 
 @Controller('/orders')
+@Roles('ADMIN')
 export class PostOrderController {
   constructor(private postOrder: PostOrderUseCase) {}
 

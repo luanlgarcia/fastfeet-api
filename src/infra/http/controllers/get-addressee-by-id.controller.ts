@@ -8,8 +8,10 @@ import {
 } from '@nestjs/common'
 import { AddresseePresenter } from '../presenters/addressee-presenter'
 import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
+import { Roles } from '@/infra/auth/roles'
 
 @Controller('/addressees/')
+@Roles('ADMIN')
 export class GetAddresseeByIdController {
   constructor(private getAddresseeById: GetAddresseeUseCase) {}
 
