@@ -11,10 +11,14 @@ import { PrismaOrderMapper } from '../mappers/prisma-order-mapper'
 import { PrismaOrderDetailsMapper } from '../mappers/prisma-order-details-mapper'
 import { OrderDetails } from '@/domain/orders/enterprise/entities/value-objects/order-details'
 import { DomainEvents } from '@/core/events/domain-events'
+import { CacheRepository } from '@/infra/cache/cache-repository'
 
 @Injectable()
 export class PrismaOrdersRepository implements OrdersRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cache: CacheRepository,
+  ) {}
 
   async findById(id: string): Promise<Order | null> {
     const order = await this.prisma.order.findUnique({ where: { id } })
@@ -45,7 +49,13 @@ export class PrismaOrdersRepository implements OrdersRepository {
     return orders.map(PrismaOrderDetailsMapper.toDomain)
   }
 
-  async findDetailsById(id: string) {
+  async findDetailsById(id: string): Promise<OrderDetails | null> {
+    const cacheHit = await this.cache.get(`order:${id}:details`)
+
+    if (cacheHit) {
+      return PrismaOrderDetailsMapper.fromCache(JSON.parse(cacheHit))
+    }
+
     const order = await this.prisma.order.findUnique({
       where: { id },
       include: { addressee: true },
@@ -55,7 +65,14 @@ export class PrismaOrdersRepository implements OrdersRepository {
       return null
     }
 
-    return PrismaOrderDetailsMapper.toDomain(order)
+    const orderDetails = PrismaOrderDetailsMapper.toDomain(order)
+
+    await this.cache.set(
+      `order:${id}:details`,
+      JSON.stringify(PrismaOrderDetailsMapper.toCache(orderDetails)),
+    )
+
+    return orderDetails
   }
 
   async findManyNearby(
@@ -106,6 +123,8 @@ export class PrismaOrdersRepository implements OrdersRepository {
       data: PrismaOrderMapper.toPrisma(order),
     })
 
+    await this.cache.delete(`order:${order.id.toString()}:details`)
+
     DomainEvents.dispatchEventsForAggregate(order.id)
   }
 
@@ -119,5 +138,7 @@ export class PrismaOrdersRepository implements OrdersRepository {
     await this.prisma.order.delete({
       where: { id: order.id.toString() },
     })
+
+    await this.cache.delete(`order:${order.id.toString()}:details`)
   }
 }

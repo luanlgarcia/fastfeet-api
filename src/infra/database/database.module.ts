@@ -12,8 +12,10 @@ import { NotificationsRepository } from '@/domain/notification/application/repos
 import { PrismaNotificationsRepository } from './prisma/repositories/prisma-notification-repository'
 import { AdminsRepository } from '@/domain/orders/application/repositories/admins-repository'
 import { PrismaAdminsRepository } from './prisma/repositories/prisma-admins-repository'
+import { CacheModule } from '../cache/cache.module'
 
 @Module({
+  imports: [CacheModule],
   providers: [
     PrismaService,
     {
