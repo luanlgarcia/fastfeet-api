@@ -36,19 +36,19 @@ describe('Delete Addressee (E2E)', () => {
 
     const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
-    const addresse = await addresseeFactory.makeAddressee()
+    const addressee = await addresseeFactory.makeAddressee()
 
-    const addresseId = addresse.id.toString()
+    const addresseeId = addressee.id.toString()
 
     const response = await request(app.getHttpServer())
-      .delete(`/addressees/${addresseId}`)
+      .delete(`/addressees/${addresseeId}`)
       .set('Authorization', `Bearer ${accessToken}`)
 
     expect(response.statusCode).toBe(204)
 
-    const addresseOnDatabase = await prisma.user.findUnique({
+    const addresseOnDatabase = await prisma.addressee.findUnique({
       where: {
-        id: addresseId,
+        id: addresseeId,
       },
     })
 

@@ -8,7 +8,7 @@ import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import { OrderFactory } from 'test/factories/make-order'
 import request from 'supertest'
 
-describe('Fetch Delivery Person Orders (E2e)', () => {
+describe('Fetch Delivery Person Orders (E2E)', () => {
   let app: INestApplication
   let deliveryPersonFactory: DeliveryPersonFactory
   let addresseeFactory: AddresseeFactory

@@ -5,11 +5,13 @@ import {
   Body,
   Controller,
   HttpCode,
+  NotFoundException,
   Param,
   Put,
 } from '@nestjs/common'
 import { EditDeliveryPersonUseCase } from '@/domain/orders/application/use-cases/edit-delivery-person'
 import { Roles } from '@/infra/auth/roles'
+import { ResourceNotFoundError } from '@/core/errors/resource-not-found-error'
 
 const editDeliveryPersonBodySchema = z.object({
   name: z.string(),
@@ -24,7 +26,7 @@ type EditDeliveryPersonBodySchema = z.infer<typeof editDeliveryPersonBodySchema>
 export class EditDeliveryPersonController {
   constructor(private editDeliveryPerson: EditDeliveryPersonUseCase) {}
 
-  @Put('/:id')
+  @Put(':id')
   @HttpCode(204)
   async handle(
     @Body(bodyValidationPipe) body: EditDeliveryPersonBodySchema,
@@ -38,7 +40,14 @@ export class EditDeliveryPersonController {
     })
 
     if (result.isLeft()) {
-      throw new BadRequestException()
+      const error = result.value
+
+      switch (error.constructor) {
+        case ResourceNotFoundError:
+          throw new NotFoundException(error.message)
+        default:
+          throw new BadRequestException(error.message)
+      }
     }
   }
 }

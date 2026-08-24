@@ -15,7 +15,7 @@ import { Roles } from '@/infra/auth/roles'
 export class GetDeliveryPersonByIdController {
   constructor(private getDeliveryPersonById: GetDeliveryPersonUseCase) {}
 
-  @Get('/:id')
+  @Get(':id')
   async handle(@Param('id') deliveryPersonId: string) {
     const result = await this.getDeliveryPersonById.execute({
       deliveryPersonId,

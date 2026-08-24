@@ -7,27 +7,24 @@ import { Test } from '@nestjs/testing'
 import request from 'supertest'
 import { AddresseeFactory } from 'test/factories/make-addressee'
 import { AdminFactory } from 'test/factories/make-admin'
-import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 
 describe('Create order (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let adminFactory: AdminFactory
-  let deliveryPersonFactory: DeliveryPersonFactory
   let addresseeFactory: AddresseeFactory
   let jwt: JwtService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [DeliveryPersonFactory, AddresseeFactory, AdminFactory],
+      providers: [AddresseeFactory, AdminFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
 
     prisma = moduleRef.get(PrismaService)
     adminFactory = moduleRef.get(AdminFactory)
-    deliveryPersonFactory = moduleRef.get(DeliveryPersonFactory)
     addresseeFactory = moduleRef.get(AddresseeFactory)
     jwt = moduleRef.get(JwtService)
 
@@ -39,14 +36,14 @@ describe('Create order (E2E)', () => {
 
     const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
-    const addresse = await addresseeFactory.makeAddressee()
+    const addressee = await addresseeFactory.makeAddressee()
 
     const response = await request(app.getHttpServer())
       .post('/orders')
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         name: 'Order 1',
-        addresseeId: addresse.id.toString(),
+        addresseeId: addressee.id.toString(),
       })
 
     expect(response.statusCode).toBe(201)

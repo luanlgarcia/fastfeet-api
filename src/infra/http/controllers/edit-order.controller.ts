@@ -22,7 +22,7 @@ const bodyValidationPipe = new ZodValidationPipe(editOrderBodySchema)
 
 type EditOrderBodySchema = z.infer<typeof editOrderBodySchema>
 
-@Controller('/orders/')
+@Controller('/orders')
 @Roles('ADMIN')
 export class EditOrderController {
   constructor(private editOrder: EditOrderUseCase) {}

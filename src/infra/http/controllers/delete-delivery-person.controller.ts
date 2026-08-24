@@ -17,7 +17,7 @@ import {
 export class DeleteDeliveryPersonController {
   constructor(private deleteDeliveryPerson: DeleteDeliveryPersonUseCase) {}
 
-  @Delete('/:id')
+  @Delete(':id')
   @HttpCode(204)
   async handle(@Param('id') deliveryPersonId: string) {
     const result = await this.deleteDeliveryPerson.execute({

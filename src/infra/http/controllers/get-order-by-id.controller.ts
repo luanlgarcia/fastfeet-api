@@ -10,7 +10,7 @@ import {
 import { OrderDetailsPresenter } from '../presenters/order-details-presenter'
 import { Roles } from '@/infra/auth/roles'
 
-@Controller('/orders/')
+@Controller('/orders')
 @Roles('ADMIN')
 export class GetOrderByIdController {
   constructor(private getOrderById: GetOrderUseCase) {}

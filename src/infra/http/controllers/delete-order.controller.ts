@@ -10,7 +10,7 @@ import {
   Param,
 } from '@nestjs/common'
 
-@Controller('/orders/')
+@Controller('/orders')
 @Roles('ADMIN')
 export class DeleteOrderController {
   constructor(private deleteOrder: DeleteOrderUseCase) {}

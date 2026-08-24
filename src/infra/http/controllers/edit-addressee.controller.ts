@@ -35,7 +35,7 @@ const bodyValidationPipe = new ZodValidationPipe(editAddresseeBodySchema)
 
 type EditAddresseeBodySchema = z.infer<typeof editAddresseeBodySchema>
 
-@Controller('/addressees/')
+@Controller('/addressees')
 @Roles('ADMIN')
 export class EditAddresseeController {
   constructor(private editAddressee: EditAddresseeUseCase) {}

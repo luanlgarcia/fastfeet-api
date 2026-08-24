@@ -132,6 +132,8 @@ export class PrismaOrdersRepository implements OrdersRepository {
     await this.prisma.order.create({
       data: PrismaOrderMapper.toPrisma(order),
     })
+
+    DomainEvents.dispatchEventsForAggregate(order.id)
   }
 
   async delete(order: Order): Promise<void> {

@@ -11,6 +11,7 @@ import { PostOrderUseCase } from '@/domain/orders/application/use-cases/post-ord
 import { OrderNotFoundError } from '@/domain/orders/application/use-cases/errors/order-not-found-error'
 import { InvalidOrderStatusError } from '@/domain/orders/application/use-cases/errors/invalid-order-status-error'
 import { Roles } from '@/infra/auth/roles'
+import { OrderWithoutAddresseeError } from '@/domain/orders/application/use-cases/errors/order-without-addressee-error'
 
 @Controller('/orders')
 @Roles('ADMIN')
@@ -29,6 +30,7 @@ export class PostOrderController {
 
       switch (error.constructor) {
         case OrderNotFoundError:
+        case OrderWithoutAddresseeError:
           throw new NotFoundException(error.message)
         case InvalidOrderStatusError:
           throw new ConflictException(error.message)

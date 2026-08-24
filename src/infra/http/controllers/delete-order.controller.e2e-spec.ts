@@ -39,9 +39,9 @@ describe('Delete order (E2E)', () => {
 
     const accessToken = jwt.sign({ sub: user.id.toString(), role: 'ADMIN' })
 
-    const addresse = await addresseeFactory.makeAddressee()
+    const addressee = await addresseeFactory.makeAddressee()
 
-    const order = await orderFactory.makeOrder({ addresseeId: addresse.id })
+    const order = await orderFactory.makeOrder({ addresseeId: addressee.id })
 
     const orderId = order.id.toString()
 

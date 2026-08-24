@@ -7,7 +7,7 @@ import { DeliveryPersonFactory } from 'test/factories/make-delivery-person'
 import request from 'supertest'
 import { AdminFactory } from 'test/factories/make-admin'
 
-describe('Get delivery question by id (E2E)', () => {
+describe('Get delivery by id (E2E)', () => {
   let app: INestApplication
   let deliveryPersonFactory: DeliveryPersonFactory
   let adminFactory: AdminFactory
