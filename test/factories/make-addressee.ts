@@ -38,12 +38,12 @@ export class AddresseeFactory {
   constructor(private prisma: PrismaService) {}
 
   async makeAddressee(data: Partial<AddresseeProps> = {}): Promise<Addressee> {
-    const addresse = makeAddressee(data)
+    const addressee = makeAddressee(data)
 
     await this.prisma.addressee.create({
-      data: PrismaAddresseeMapper.toPrisma(addresse),
+      data: PrismaAddresseeMapper.toPrisma(addressee),
     })
 
-    return addresse
+    return addressee
   }
 }
