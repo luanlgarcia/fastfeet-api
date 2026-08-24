@@ -1,10 +1,8 @@
 # FastFeet API
 
-API REST para a transportadora fictícia FastFeet, que gerencia o ciclo completo de encomendas: do cadastro de destinatários e entregadores até a entrega ou devolução do pacote.
+API REST para a transportadora FastFeet, que gerencia o ciclo completo de encomendas: do cadastro de destinatários e entregadores até a confirmação de entrega com foto, passando por autorização baseada em papéis, notificação do destinatário a cada mudança de status e busca de encomendas por proximidade geográfica.
 
-Este é o desafio final da trilha de Node.js da Rocketseat. O objetivo é exercitar Domain-Driven Design, Clean Architecture, Domain Events e testes automatizados em uma aplicação NestJS.
-
-Layout de referência: [Figma](https://www.figma.com/community/file/1550522126708534266)
+Construída para exercitar **Domain-Driven Design**, **Clean Architecture** e **Domain Events** em uma aplicação NestJS, com o domínio inteiramente desacoplado de framework, banco de dados e HTTP, e coberto por testes unitários e end-to-end.
 
 ## Tecnologias
 
@@ -139,7 +137,7 @@ Todas as rotas exigem autenticação via `Authorization: Bearer <token>`, exceto
 
 Nas rotas do ciclo de vida da encomenda o entregador é sempre lido do token, nunca do corpo ou da URL da requisição.
 
-## Requisitos do desafio
+## Escopo funcional
 
 ### Funcionalidades
 
@@ -169,7 +167,7 @@ Nas rotas do ciclo de vida da encomenda o entregador é sempre lido do token, nu
 
 ## Decisões de projeto
 
-Alguns pontos do desafio admitem mais de uma leitura. As decisões tomadas e o raciocínio por trás delas:
+Alguns pontos do escopo admitem mais de uma leitura. As decisões tomadas e o raciocínio por trás delas:
 
 **Admin e entregador são entidades separadas.** Apesar de ambos virarem uma única tabela de usuários com uma coluna `role` na persistência, no domínio são conceitos distintos com capacidades distintas. O modelo de domínio não precisa espelhar o modelo de banco: quem reconcilia os dois é o mapper na camada de infraestrutura.
 
@@ -177,7 +175,7 @@ Alguns pontos do desafio admitem mais de uma leitura. As decisões tomadas e o r
 
 **Identidade nunca vem da requisição.** As rotas do ciclo de vida da encomenda leem o entregador do `sub` do token, e a listagem de encomendas do entregador não tem parâmetro de rota. Regras de propriedade validadas contra um identificador que o próprio cliente escolhe não protegem nada, então o dado é lido de onde não pode ser forjado.
 
-**A devolução é feita pelo entregador que retirou.** O desafio não especifica quem pode devolver. Optou-se por espelhar a entrega, já que a devolução é o desfecho alternativo de uma tentativa de entrega: mesmo ator, mesmo momento do fluxo.
+**A devolução é feita pelo entregador que retirou.** O escopo não especifica quem pode devolver. Optou-se por espelhar a entrega, já que a devolução é o desfecho alternativo de uma tentativa de entrega: mesmo ator, mesmo momento do fluxo.
 
 **Coordenadas geográficas são um value object.** Latitude e longitude nunca fazem sentido separadas, então formam um `Coordinate`, que também carrega o cálculo de distância como comportamento de domínio.
 
@@ -198,7 +196,7 @@ Os testes end-to-end cobrem o wiring: rotas, guards, serialização, mapeamento 
 | Suíte | Arquivos | Comando |
 | --- | --- | --- |
 | Unitários | 28 | `npm test` |
-| End-to-end | 22 | `npm run test:e2e` |
+| End-to-end | 23 | `npm run test:e2e` |
 
 O teste de upload envia um arquivo para o bucket R2 configurado, portanto exige credenciais válidas e acesso à rede.
 
